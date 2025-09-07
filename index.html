@@ -44,6 +44,7 @@
     .no{  background:#f44336; color:#fff; }
     .why{ background:#ff9800; color:#fff; }
 
+    /* diálogo */
     .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center; padding:16px; }
     .dialog-box{ width:min(320px,92vw); background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
     .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
@@ -51,6 +52,19 @@
     .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
     .shaking{ animation:shake .3s; }
+
+    /* ❤️ coração de rodapé */
+    .heart {
+      font-size: 64px;          /* tamanho do coração */
+      line-height: 1;
+      margin-top: 18px;         /* espaço abaixo do botão laranja */
+      user-select: none;
+      animation: pulse 1.6s ease-in-out infinite; /* remova esta linha se não quiser animação */
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1);   opacity: .9; }
+      50%     { transform: scale(1.08); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -66,6 +80,9 @@
   <div class="button-container" style="margin-top: 20px;">
     <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
   </div>
+
+  <!-- ❤️ coração para preencher o espaço vazio -->
+  <div class="heart" aria-hidden="true">❤️</div>
 
   <!-- Caixa de diálogo -->
   <div class="dialog-overlay" id="dialogo">
