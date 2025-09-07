@@ -15,15 +15,14 @@
       background-position: center center; /* centraliza */
       background-repeat: no-repeat;
 
-      /* centraliza o card no viewport */
-      display: grid;
+      display: grid;                      /* centraliza o card */
       place-items: center;
       padding: 20px;
       text-align: center;
       font-family: sans-serif;
     }
 
-    /* ===== Card translúcido para TODOS os elementos ===== */
+    /* ===== Card translúcido para TODO o conteúdo ===== */
     .card {
       width: min(980px, 96vw);
       background: rgba(0,0,0,0.45);
@@ -50,7 +49,7 @@
       will-change: opacity;
     }
 
-    /* Texto com cursor e melhor legibilidade sobre o card */
+    /* Texto com cursor */
     .typing{
       font-size: 22px;
       max-width: 100%;
@@ -107,21 +106,9 @@
     .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
     .shaking{ animation:shake .3s; }
-
-    /* ❤️ coração de rodapé – com mais espaço do botão */
-    .heart {
-      font-size: 64px;
-      line-height: 1;
-      margin-top: 56px;
-      user-select: none;
-      animation: pulse 1.6s ease-in-out infinite;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,.45));
-    }
-    @keyframes pulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:1} }
   </style>
 </head>
 <body>
-  <!-- TODO o conteúdo fica dentro do card -->
   <div class="card">
     <!-- Título com emoji que alterna -->
     <h1 class="title">
@@ -138,12 +125,9 @@
     <div class="button-container" style="margin-top: 20px;">
       <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
     </div>
-
-    <!-- ❤️ coração para preencher o espaço vazio -->
-    <div class="heart" aria-hidden="true">❤️</div>
   </div>
 
-  <!-- Caixa de diálogo (fora do card para ficar sobre toda a tela) -->
+  <!-- Caixa de diálogo -->
   <div class="dialog-overlay" id="dialogo">
     <div class="dialog-box">
       <p>Você tem certeza?</p>
