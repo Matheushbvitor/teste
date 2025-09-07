@@ -21,7 +21,6 @@
     .no  { background:#f44336; color:#fff; }
     .why { background:#ff9800; color:#fff; }
 
-    /* diálogo */
     .dialog-overlay{
       display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
       justify-content:center; align-items:center; padding:16px;
@@ -40,7 +39,6 @@
     .sim-btn{ background:#4CAF50; color:#fff; }
     .nao-btn{ background:#f44336; color:#fff; }
 
-    /* animação tremidinha */
     @keyframes shake {
       0% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -53,10 +51,10 @@
 </head>
 <body>
   <h1>Oi Mari 🤩</h1>
-  <p>
-    Acho que seria legal conversarmos pessoalmente e nos conhecermos melhor, de maneira respeitosa e descontraída.<br>
-    Que tal marcarmos algo? Pode ser um café, um passeio ou qualquer coisa tranquila.<br>
-    Você aceita?
+  <p style="max-width: 500px;">
+    Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade incontrolável de te ver todo dia.<br>
+    Sinceramente? Tô começando a desconfiar que o diagnóstico é você.<br>
+    Com todo respeito, é claro… mas será que eu teria alguma chance com você?
   </p>
 
   <div class="button-container" style="margin-bottom: 12px;">
@@ -80,15 +78,14 @@
   </div>
 
   <script>
-    // ✅ Ao clicar em Aceito, abre o WhatsApp com a mensagem já preenchida
     function aceitou(){
       const msg = encodeURIComponent("Aceitei :)");
       window.location.href = `https://wa.me/5518996259121?text=${msg}`;
-      // se preferir abrir em nova aba, use a linha abaixo e remova a de cima:
-      // window.open(`https://wa.me/5518996259121?text=${msg}`, "_blank", "noopener");
     }
 
-    function abrirPagina(){ window.location.href = "pagina.html"; }
+    function abrirPagina(){
+      window.location.href = "pagina.html";
+    }
 
     function abrirDialogo(){
       const cont = document.getElementById('dialogButtons');
@@ -136,7 +133,7 @@
     function animateSlide(el, dx){
       el.style.transition = 'none';
       el.style.transform  = `translateX(${dx}px)`;
-      el.getBoundingClientRect(); // força reflow
+      el.getBoundingClientRect();
       requestAnimationFrame(() => {
         el.style.transition = 'transform 220ms ease';
         el.style.transform  = 'translateX(0)';
@@ -145,6 +142,3 @@
   </script>
 </body>
 </html>
-
-
-
