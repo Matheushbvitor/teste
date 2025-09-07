@@ -5,126 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Convite Especial</title>
   <style>
-    /* === Fundo com a mesma imagem e formato da outra página === */
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background-color: #ffffff;
-      background-image: url("IMG_20250823_124847408.jpg");
-      background-size: contain;
-      background-position: center center;
-      background-repeat: no-repeat;
-
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      text-align: center;
-      font-family: sans-serif;
+    /* === Fundo igual ao da outra página === */
+    body{
+      margin:0; min-height:100vh; background:#ffffff;
+      background-image:url("IMG_20250823_124847408.jpg");
+      background-size:contain; background-position:center; background-repeat:no-repeat;
+      display:grid; place-items:center; padding:20px; text-align:center; font-family:sans-serif;
     }
 
-    /* ===== Card translúcido para TODO o conteúdo ===== */
-    .card {
-      width: min(980px, 96vw);
-      background: rgba(0,0,0,0.45);
-      color: #fff;
-      padding: 28px 24px;
-      border-radius: 16px;
-      text-align: center;
-      backdrop-filter: blur(2px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    /* ===== Card ===== */
+    .card{
+      position:relative;
+      width:min(980px,96vw);
+      background:rgba(0,0,0,.45);
+      color:#fff; padding:28px 24px; border-radius:16px; text-align:center;
+      backdrop-filter:blur(2px); box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
 
     /* ===== Título ===== */
-    h1.title {
-      margin: 0 0 18px;
-      font-size: 42px;
-      font-weight: 700;
-      line-height: 1.15;
-      color: #fff;
-      text-shadow: 0 1px 2px rgba(0,0,0,.55);
-    }
-    .title-emoji {
-      display: inline-block;
-      transition: opacity 260ms ease;
-      will-change: opacity;
-    }
+    h1.title{ margin:0 0 18px; font-size:42px; font-weight:700; line-height:1.15; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.55); }
+    .title-emoji{ display:inline-block; transition:opacity .26s ease; will-change:opacity; }
 
-    /* Texto com cursor */
+    /* ===== Texto com cursor e efeito de digitação ===== */
     .typing{
-      font-size: 22px;
-      max-width: 100%;
-      line-height: 1.6;
-      color:#fff;
-      text-align:center;
-
-      border-right: 2px solid rgba(255,255,255,.9);
-      animation: blink-caret .75s step-end infinite;
-
-      white-space: pre-wrap;
-      word-break: normal;
-      overflow-wrap: normal;
-      hyphens: none;
-      margin: 0 auto 28px;
-
-      text-shadow: 0 1px 2px rgba(0,0,0,.55);
+      font-size:22px; max-width:100%; line-height:1.6; color:#fff; text-align:center;
+      border-right:2px solid rgba(255,255,255,.9); animation:blink-caret .75s step-end infinite;
+      white-space:pre-wrap; margin:0 auto 14px; text-shadow:0 1px 2px rgba(0,0,0,.55);
     }
-    @keyframes blink-caret { 50%{ border-color:transparent; } }
+    @keyframes blink-caret{ 50%{ border-color:transparent } }
+    @media (min-width:1200px){ .typing{font-size:24px} .title{font-size:48px} }
 
-    @media (min-width: 1200px){
-      .typing{ font-size: 24px; }
-      h1.title{ font-size: 48px; }
-    }
+    /* ===== Botões ===== */
+    .button-container{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+    .btn{ padding:15px 25px; font-size:18px; border:none; border-radius:10px; cursor:pointer; transition:transform .15s ease,filter .15s ease; }
+    .btn:active{ transform:scale(.98) } .btn:hover{ filter:brightness(1.06) }
+    .yes{ background:#4CAF50; color:#fff } .no{ background:#f44336; color:#fff } .why{ background:#ff9800; color:#fff }
+    .btn .emo{ margin-left:.35em; display:inline-block; transform:translateY(1px) }
 
-    .button-container{
-      display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px;
-    }
-    .btn{
-      padding:15px 25px; font-size:18px; border:none; border-radius:10px;
-      cursor:pointer; transition:transform .15s ease, filter .15s ease;
-    }
-    .btn:active{ transform:scale(.98); }
-    .btn:hover{ filter:brightness(1.06); }
-
-    .yes{ background:#4CAF50; color:#fff; }
-    .no{  background:#f44336; color:#fff; }
-    .why{ background:#ff9800; color:#fff; }
-
-    .btn .emo { margin-left: .35em; display:inline-block; transform: translateY(1px); }
-
-    /* Diálogo */
-    .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
-      justify-content:center; align-items:center; padding:16px; }
-    .dialog-box{
-      width:min(360px, 92vw);
-      background: rgba(255,255,255,0.96);
-      border-radius:12px; padding:20px; text-align:center;
-      box-shadow:0 12px 36px rgba(0,0,0,.35);
-      backdrop-filter: blur(2px);
-    }
-    .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
-    .dialog-buttons{ display:flex; justify-content:space-between; gap:12px; }
-    .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
+    /* ===== Diálogo ===== */
+    .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center; padding:16px; }
+    .dialog-box{ width:min(360px,92vw); background:rgba(255,255,255,.96); border-radius:12px; padding:20px; text-align:center; box-shadow:0 12px 36px rgba(0,0,0,.35); backdrop-filter:blur(2px); }
+    .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333 } .dialog-buttons{ display:flex; gap:12px; } .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer }
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
-    .shaking{ animation:shake .3s; }
+    .shaking{ animation:shake .3s }
+
+    /* ===== Acrônimo COMPLETO (único bloco, abaixo do botão laranja) ===== */
+    #acronymFull{
+      width: min(860px, 92vw);
+      margin: 16px auto 0;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.06);
+      border-radius: 12px;
+
+      font-size: clamp(15px, 1.8vw, 19px);
+      line-height: 1.6;
+
+      transition: height 260ms ease, opacity 220ms ease;
+      overflow: hidden;
+      text-align:left;
+    }
+    #acronymFull .row{
+      display:flex; align-items:center; gap:10px; margin:4px 0;
+    }
+    #acronymFull .letter{
+      width:28px; height:28px; flex:0 0 28px;
+      border-radius:8px;
+      background:rgba(255,255,255,.92); color:#222;
+      font-weight:800; font-size:14px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 12px rgba(0,0,0,.25);
+    }
+    #acronymFull .text{ flex:1; }
   </style>
 </head>
 <body>
   <div class="card">
-    <!-- Título com emoji que alterna -->
-    <h1 class="title">
-      Oi Mari <span id="emojiCycler" class="title-emoji" aria-hidden="true">😍</span>
-    </h1>
+    <!-- Título -->
+    <h1 class="title">Oi Mari <span id="emojiCycler" class="title-emoji" aria-hidden="true">😍</span></h1>
 
+    <!-- Texto com efeito -->
     <p id="textoDigitado" class="typing"></p>
 
+    <!-- Botões -->
     <div class="button-container">
       <button class="btn yes" onclick="aceitou()">Tenho chance! <span class="emo" role="img" aria-label="rosto apaixonado">🥰</span></button>
       <button class="btn no"  onclick="abrirDialogo()">Não tenho chance! <span class="emo" role="img" aria-label="triste">🙁</span></button>
     </div>
 
     <div class="button-container" style="margin-top: 20px;">
-      <button class="btn why" onclick="abrirPagina()">Por que eu queria uma chance? 🤔</button>
+      <button id="whyBtn" class="btn why" onclick="abrirPagina()">Por que eu queria uma chance? 🤔</button>
     </div>
+
+    <!-- Acrônimo COMPLETO (único) -->
+    <section id="acronymFull" aria-live="polite" aria-atomic="true"></section>
   </div>
 
   <!-- Caixa de diálogo -->
@@ -139,7 +112,7 @@
   </div>
 
   <script>
-    // Botões
+    /* ===== Botões e diálogo ===== */
     function aceitou(){ const msg = encodeURIComponent("Aceitei :)"); window.location.href = `https://wa.me/5518996259121?text=${msg}`; }
     function abrirPagina(){ window.location.href = "pagina.html"; }
     function abrirDialogo(){
@@ -170,85 +143,222 @@
       requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; });
     }
 
-    // 🩷 Texto: UM coração por vez → letra com fade (mais 15% rápido)
+    /* ===== Texto com coração/letra ===== */
     const texto =
-      "Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.\nSinceramente? Tô começando a desconfiar que o diagnóstico é você.\nCom todo respeito, é claro… mas será que eu teria alguma chance com você?";
+`Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.
+Sinceramente? Tô começando a desconfiar que o diagnóstico é você.
+Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
 
     const destino = document.getElementById("textoDigitado");
     let index = 0;
+    const BASE_INTERVAL=21, COMMA_PAUSE=32, SENTENCE_PAUSE=66, REVEAL_DELAY=157, FADE_DURATION=47;
 
-    /* tempos anteriores ÷ 1.15 */
-    const BASE_INTERVAL   = 21;  // 24 / 1.15 ≈ 20.9
-    const COMMA_PAUSE     = 32;  // 37 / 1.15 ≈ 32.2
-    const SENTENCE_PAUSE  = 66;  // 76 / 1.15 ≈ 66.1
-    const REVEAL_DELAY    = 157; // 181 / 1.15 ≈ 157.4
-    const FADE_DURATION   = 47;  // 62 / 1.15 ≈ 47.0
-
-    function nextDelayFor(char){
-      if (char === ',' || char === ';') return BASE_INTERVAL + COMMA_PAUSE;
-      if (char === '.' || char === '!' || char === '?' || char === '…') return BASE_INTERVAL + SENTENCE_PAUSE;
+    function nextDelayFor(c){
+      if (c===','||c===';') return BASE_INTERVAL+COMMA_PAUSE;
+      if ('.!?…'.includes(c)) return BASE_INTERVAL+SENTENCE_PAUSE;
       return BASE_INTERVAL;
     }
-
     function digitarSequencial(){
-      if (index >= texto.length){
-        destino.style.borderRight = "none";
-        return;
-      }
-
-      const char = texto.charAt(index);
-
-      // espaços e quebras sem coração
-      if (char === " "){
-        destino.append(" ");
-        index++;
-        setTimeout(digitarSequencial, BASE_INTERVAL);
-        return;
-      }
-      if (char === "\n"){
-        destino.appendChild(document.createElement("br"));
-        index++;
-        setTimeout(digitarSequencial, BASE_INTERVAL + SENTENCE_PAUSE);
-        return;
-      }
-
-      // coração único
-      const span = document.createElement("span");
-      span.textContent = "❤️";
-      span.style.display = "inline";
-      span.style.opacity  = "1";
-      span.style.transition = `opacity ${FADE_DURATION}ms ease`;
-      destino.appendChild(span);
-
-      setTimeout(() => {
-        span.style.opacity = "0";
-        setTimeout(() => {
-          span.textContent = char;
-          span.style.opacity = "1";
-          index++;
-          setTimeout(digitarSequencial, nextDelayFor(char));
-        }, FADE_DURATION);
-      }, REVEAL_DELAY);
+      if (index>=texto.length){ destino.style.borderRight='none'; return; }
+      const c = texto.charAt(index);
+      if (c===' '){ destino.append(' '); index++; return setTimeout(digitarSequencial, BASE_INTERVAL); }
+      if (c==='\n'){ destino.appendChild(document.createElement('br')); index++; return setTimeout(digitarSequencial, BASE_INTERVAL+SENTENCE_PAUSE); }
+      const span=document.createElement('span');
+      span.textContent='❤️'; span.style.display='inline'; span.style.opacity='1';
+      span.style.transition=`opacity ${FADE_DURATION}ms ease`; destino.appendChild(span);
+      setTimeout(()=>{ span.style.opacity='0'; setTimeout(()=>{ span.textContent=c; span.style.opacity='1'; index++; setTimeout(digitarSequencial,nextDelayFor(c)); }, FADE_DURATION); }, REVEAL_DELAY);
     }
 
-    // 🔁 Emoji do título alternando a cada 5s com fade
-    const emojiList = ["🤩","🥰","😍","💖"];
-    const emojiEl = document.getElementById("emojiCycler");
-    let emojiIndex = 0;
-    function cycleEmoji(){
-      emojiEl.style.opacity = "0";
-      setTimeout(()=>{
-        emojiIndex = (emojiIndex + 1) % emojiList.length;
-        emojiEl.textContent = emojiList[emojiIndex];
-        emojiEl.style.opacity = "1";
-      }, 260);
-    }
+    /* ===== Emoji do título ===== */
+    const emojiList=["🤩","🥰","😍","💖"], emojiEl=document.getElementById("emojiCycler"); let emojiIndex=0;
+    function cycleEmoji(){ emojiEl.style.opacity='0'; setTimeout(()=>{ emojiIndex=(emojiIndex+1)%emojiList.length; emojiEl.textContent=emojiList[emojiIndex]; emojiEl.style.opacity='1'; },260); }
 
-    window.onload = function(){
-      digitarSequencial();
-      setInterval(cycleEmoji, 5000); // 5s
+    /* ===== Dados dos acrônimos ===== */
+    const ACRONYM_BLOCK = `
+---ACRONIMOS_POR_LETRA---
+[M]
+- Meu motivo de sorrir
+- Minha palmeirense preferida
+- Melodia suave da vida
+- Meu porto seguro
+- Minha zoeira favorita
+- Minha camisa 10
+- Modelo único
+- Motivada e focada
+- Meu melhor lugar no mundo
+- Meu mundo fica melhor com você
+- Meu sorriso preferido mora em você
+- Minha dose diária de dopamina
+- Maravilhosa
+
+[A]
+- Amor em cada gesto
+- A única terapia que eu quero é estar ao seu lado
+- Análise nenhuma explica o que sinto por você
+- Alegria que contagia
+- A única que quero ao meu lado
+- Adora dar bronca (rs)
+- Apaixonante
+- Atrapalha meu coração (faz ele errar as batidas rs)
+- Alma linda que encanta
+- Autêntica em cada gesto
+- Amo seus surtinhos (fofos)
+- Abrigo contra qualquer tempestade
+- Amiga
+- Admirável
+- Amo
+- Admirada
+- A referência que eu admiro
+- Amanhecer mais bonito ao seu lado
+- Amor que nenhum teste de Rorschach disfarça
+
+[R]
+- Razão das minhas melhores inspirações
+- Referência nos meus sonhos (até o Jung concordaria)
+- Risada fofa
+- Rara e preciosa
+- Responsável e brilhante
+- Respiro aliviado quando te vejo
+- Romance que eu quero viver
+- Rosto que ilumina meus dias
+
+[I]
+- Ilumina qualquer ambiente
+- Insight mais lindo da minha vida
+- Incrivelmente gente boa
+- Irrepreensível no caráter
+- Impossível não te notar
+- Incomparável na essência
+- Inteligência que encanta
+- Imensa no coração
+- Inesquecível
+
+[N]
+- Ninguém se compara a você
+- Nem Freud explica minha atração por você
+- Nunca perde o charme
+- Na medida exata do meu sonho
+- Notável por onde passa
+- Nocaute no meu coração
+- Nível máximo de encanto
+- Nunca te trocaria por nada
+- Nos meus planos, sempre você
+---FIM---
+`;
+
+    function parseGroup(block, letter){
+      const re = new RegExp(`\\[${letter}\\]([\\s\\S]*?)(?=\\n\\[|---FIM---)`, 'm');
+      const m = block.match(re);
+      if(!m) return [];
+      return m[1].split('\n').map(l => l.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+    }
+    const GROUPS = {
+      M: parseGroup(ACRONYM_BLOCK, 'M'),
+      A: parseGroup(ACRONYM_BLOCK, 'A'),
+      R: parseGroup(ACRONYM_BLOCK, 'R'),
+      I: parseGroup(ACRONYM_BLOCK, 'I'),
+      N: parseGroup(ACRONYM_BLOCK, 'N'),
     };
+
+    function pickOne(arr, avoid){
+      const pool = arr.filter(x => x !== avoid);
+      return pool.length ? pool[Math.floor(Math.random()*pool.length)] : (arr[0] || '');
+    }
+    function pickDistinctA(aArr, usedSet, avoid){
+      const pool = aArr.filter(x => !usedSet.has(x) && x !== avoid);
+      if(!pool.length){
+        const fallback = aArr.filter(x => x !== avoid);
+        return fallback.length ? fallback[Math.floor(Math.random()*fallback.length)] : (aArr[0] || '');
+      }
+      return pool[Math.floor(Math.random()*pool.length)];
+    }
+
+    function makeAcronymSets(count=20){
+      const sets=[], lastByPos = Array(7).fill(null);
+      for(let s=0; s<count; s++){
+        const usedA = new Set();
+        const l0 = pickOne(GROUPS.M, lastByPos[0]);                    // M
+        const l1 = pickDistinctA(GROUPS.A, usedA, lastByPos[1]); usedA.add(l1); // A1
+        const l2 = pickOne(GROUPS.R, lastByPos[2]);                    // R
+        const l3 = pickOne(GROUPS.I, lastByPos[3]);                    // I
+        const l4 = pickDistinctA(GROUPS.A, usedA, lastByPos[4]); usedA.add(l4); // A2
+        const l5 = pickOne(GROUPS.N, lastByPos[5]);                    // N
+        const l6 = pickDistinctA(GROUPS.A, usedA, lastByPos[6]);               // A3
+        const set = [l0,l1,l2,l3,l4,l5,l6];
+        for(let i=0;i<7;i++) lastByPos[i]=set[i];
+        sets.push(set);
+      }
+      return sets;
+    }
+
+    let ACRONYM_SETS = [];
+    let currentSet = 0;
+
+    /* ===== render do bloco inferior (acrônimo completo) ===== */
+    function renderFullAcronym(lines){
+      const full = document.getElementById('acronymFull');
+      if(!full) return;
+
+      const currentH = full.offsetHeight;
+      full.style.height = currentH + 'px';
+      full.style.opacity = 0;
+
+      const letters = ['M','A','R','I','A','N','A'];
+      const frag = document.createDocumentFragment();
+      lines.forEach((txt, i)=>{
+        const row = document.createElement('div');
+        row.className = 'row';
+        const chip = document.createElement('div');
+        chip.className = 'letter';
+        chip.textContent = letters[i] || '';
+        const span = document.createElement('div');
+        span.className = 'text';
+        span.textContent = txt;
+        row.appendChild(chip);
+        row.appendChild(span);
+        frag.appendChild(row);
+      });
+
+      setTimeout(()=>{
+        full.innerHTML = '';
+        full.appendChild(frag);
+
+        const newH = full.scrollHeight;
+        full.style.height = newH + 'px';
+        const onEnd = (e)=>{
+          if(e.propertyName === 'height'){
+            full.style.height = 'auto';
+            full.style.opacity = 1;
+            full.removeEventListener('transitionend', onEnd);
+          }
+        };
+        full.addEventListener('transitionend', onEnd);
+      }, 120);
+    }
+
+    function nextAcronym(){
+      currentSet = (currentSet + 1) % ACRONYM_SETS.length;
+      renderFullAcronym(ACRONYM_SETS[currentSet]);
+    }
+
+    /* ===== Boot ===== */
+    window.addEventListener('load', ()=>{
+      digitarSequencial();
+      setInterval(cycleEmoji, 5000);
+
+      ACRONYM_SETS = makeAcronymSets(20);
+      renderFullAcronym(ACRONYM_SETS[0]);
+
+      let timer = setInterval(nextAcronym, 3000);
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState === 'visible'){
+          clearInterval(timer);
+          timer = setInterval(nextAcronym, 3000);
+        }else{
+          clearInterval(timer);
+        }
+      });
+    });
   </script>
 </body>
 </html>
-
