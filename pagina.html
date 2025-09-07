@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Por que eu queria uma chance</title>
+  <style>
+    /* Fundo com a sua foto */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-image: url("IMG_20250823_124847408.jpg");
+      background-size: cover;          /* cobre a tela toda */
+      background-position: center;     /* centraliza */
+      background-repeat: no-repeat;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    /* Caixa para deixar texto legível sobre a foto */
+    .card {
+      width: min(900px, 96vw);
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      padding: 28px 22px;
+      border-radius: 16px;
+      text-align: center;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    h1 { margin: 0 0 12px; font-size: 28px; }
+    p  { margin: 0 0 24px; font-size: 18px; line-height: 1.5; }
+    .btn {
+      padding: 12px 22px; font-size: 16px; border: none; border-radius: 10px;
+      background: #4CAF50; color: #fff; cursor: pointer;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:hover  { filter: brightness(1.05); }
+    /* Esconde o player (o som toca em background) */
+    audio { display:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Por que eu queria uma chance 💖</h1>
+    <p>
+      (Escreva aqui o seu texto especial, romântico ou divertido.)
+      <br>Prometo cuidar bem desse encontro e fazer você sorrir. 🙂
+    </p>
+
+    <button class="btn" onclick="retornar()">Retornar</button>
+  </div>
+
+  <!-- Música em loop (tenta iniciar automaticamente) -->
+  <audio id="bgm" src="careless_whispers.mp3" autoplay loop playsinline></audio>
+
+  <script>
+    function retornar(){ window.location.href = "index.html"; }
+
+    // Tenta garantir o autoplay assim que a página carregar
+    window.addEventListener("load", () => {
+      const a = document.getElementById("bgm");
+      // volume suave; ajuste se quiser
+      a.volume = 0.6;
+      const tryPlay = () => a.play().catch(() => {});
+      tryPlay();
+      // tenta novamente ao ganhar foco/visibilidade (útil em alguns navegadores)
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") tryPlay();
+      });
+      window.addEventListener("focus", tryPlay);
+    });
+  </script>
+</body>
+</html>
