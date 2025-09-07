@@ -15,16 +15,14 @@
 
     .typing{
       font-size: 22px;
-      max-width: 960px;            /* bloco de texto mais largo */
+      max-width: 960px;
       line-height: 1.6;
       color:#333;
       text-align:center;
 
-      /* cursor */
       border-right: 2px solid #333;
       animation: blink-caret .75s step-end infinite;
 
-      /* quebras de linha corretas */
       white-space: pre-wrap;
       word-break: normal;
       overflow-wrap: normal;
@@ -44,7 +42,8 @@
     .no{  background:#f44336; color:#fff; }
     .why{ background:#ff9800; color:#fff; }
 
-    /* diálogo */
+    .btn .emo { margin-left: .35em; display:inline-block; transform: translateY(1px); }
+
     .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center; padding:16px; }
     .dialog-box{ width:min(320px,92vw); background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
     .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
@@ -53,18 +52,15 @@
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
     .shaking{ animation:shake .3s; }
 
-    /* ❤️ coração de rodapé */
+    /* ❤️ coração de rodapé – agora mais distante do botão */
     .heart {
-      font-size: 64px;          /* tamanho do coração */
+      font-size: 64px;
       line-height: 1;
-      margin-top: 18px;         /* espaço abaixo do botão laranja */
+      margin-top: 56px;  /* ⬅️ aumentado */
       user-select: none;
-      animation: pulse 1.6s ease-in-out infinite; /* remova esta linha se não quiser animação */
+      animation: pulse 1.6s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%,100% { transform: scale(1);   opacity: .9; }
-      50%     { transform: scale(1.08); opacity: 1; }
-    }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:1} }
   </style>
 </head>
 <body>
@@ -73,8 +69,8 @@
   <p id="textoDigitado" class="typing"></p>
 
   <div class="button-container">
-    <button class="btn yes" onclick="aceitou()">Tenho chance!</button>
-    <button class="btn no"  onclick="abrirDialogo()">Não tenho chance!</button>
+    <button class="btn yes" onclick="aceitou()">Tenho chance! <span class="emo" role="img" aria-label="rosto apaixonado">🥰</span></button>
+    <button class="btn no"  onclick="abrirDialogo()">Não tenho chance! <span class="emo" role="img" aria-label="triste">🙁</span></button>
   </div>
 
   <div class="button-container" style="margin-top: 20px;">
@@ -96,7 +92,6 @@
   </div>
 
   <script>
-    // Botões
     function aceitou(){ const msg = encodeURIComponent("Aceitei :)"); window.location.href = `https://wa.me/5518996259121?text=${msg}`; }
     function abrirPagina(){ window.location.href = "pagina.html"; }
     function abrirDialogo(){
@@ -165,7 +160,7 @@
 
         const span = document.createElement("span");
         span.textContent = "❤️";
-        span.style.display = "inline";              // evita quebra no meio da palavra
+        span.style.display = "inline";
         span.style.opacity = "1";
         span.style.transition = `opacity ${FADE_DURATION}ms ease`;
         destino.appendChild(span);
