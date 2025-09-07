@@ -43,7 +43,7 @@
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
     .shaking{ animation:shake .3s }
 
-    /* Acrônimo COMPLETO (abaixo do botão laranja) – transição mais rápida e sem “buraco” */
+    /* Bloco de acrônimo (se usado) */
     #acronymFull{
       width: min(860px, 92vw);
       margin: 16px auto 0;
@@ -96,27 +96,45 @@
     </div>
   </div>
 
-  <!-- Áudio: feliznavida.mp3
-       1) Deixe um arquivo local "feliznavida.mp3" junto do HTML
-       2) OU substitua o RAW_GITHUB_URL pelo link "raw.githubusercontent.com/OWNER/REPO/BRANCH/path/feliznavida.mp3"
-  -->
-  <audio id="feliznavida-audio" preload="auto" crossorigin="anonymous">
+  <!-- Áudio local na MESMA PASTA: feliznavida.mp3 -->
+  <audio id="feliznavida-audio" preload="auto">
     <source src="feliznavida.mp3" type="audio/mpeg">
-    <source src="https://raw.githubusercontent.com/OWNER/REPO/BRANCH/path/feliznavida.mp3" type="audio/mpeg"><!-- troque pelo seu link -->
   </audio>
 
   <script>
     /* ===== Botões/diálogo ===== */
-    function aceitou(){
-      // toca o áudio "feliznavida" com gesto do usuário (autorizado em mobile/desktop)
-      const a = document.getElementById('feliznavida-audio');
-      if (a) {
-        a.volume = 0.45;
-        a.currentTime = 0;
-        a.play().catch(()=>{});
+    async function aceitou(){
+      const local = document.getElementById('feliznavida-audio');
+      let played = false;
+
+      async function tryPlay(el, label){
+        try{
+          el.volume = 0.5;
+          el.currentTime = 0;
+          await el.play();
+          console.log(`[OK] Áudio tocando via ${label}`);
+          return true;
+        }catch(err){
+          console.warn(`[ERRO] Falha ao tocar via ${label}:`, err);
+          return false;
+        }
       }
 
-      // aguarda 4,5 segundos antes de redirecionar
+      if (local) {
+        local.onerror = () => console.warn('[ERRO] onerror do <audio> (verifique nome/caminho: feliznavida.mp3).');
+        played = await tryPlay(local, '<audio>#feliznavida-audio');
+      } else {
+        console.warn('[INFO] <audio id="feliznavida-audio"> não encontrado.');
+      }
+
+      // Fallback: cria dinamicamente (mesmo caminho relativo)
+      if (!played) {
+        const dyn = new Audio('feliznavida.mp3');
+        dyn.preload = 'auto';
+        played = await tryPlay(dyn, 'new Audio("feliznavida.mp3")');
+      }
+
+      // Redireciona após 4,5 s
       setTimeout(()=>{
         const msg = encodeURIComponent("Aceitei :)");
         window.location.href = `https://wa.me/5518996259121?text=${msg}`;
@@ -196,7 +214,7 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     const emojiList=["🤩","🥰","😍","💖"], emojiEl=document.getElementById("emojiCycler"); let emojiIndex=0;
     function cycleEmoji(){ emojiEl.style.opacity='0'; setTimeout(()=>{ emojiIndex=(emojiIndex+1)%emojiList.length; emojiEl.textContent=emojiList[emojiIndex]; emojiEl.style.opacity='1'; },260); }
 
-    /* ===== Dados dos acrônimos ===== */
+    /* ===== (Opcional) Dados dos acrônimos ===== */
     const ACRONYM_BLOCK = `
 ---ACRONIMOS_POR_LETRA---
 [M]
@@ -283,16 +301,10 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       N: parseGroup(ACRONYM_BLOCK, 'N'),
     };
 
-    function pickOne(arr, avoid){
-      const pool = arr.filter(x => x !== avoid);
-      return pool.length ? pool[Math.floor(Math.random()*pool.length)] : (arr[0] || '');
-    }
+    function pickOne(arr, avoid){ const pool = arr.filter(x => x !== avoid); return pool.length ? pool[Math.floor(Math.random()*pool.length)] : (arr[0] || ''); }
     function pickDistinctA(aArr, usedSet, avoid){
       const pool = aArr.filter(x => !usedSet.has(x) && x !== avoid);
-      if(!pool.length){
-        const fallback = aArr.filter(x => x !== avoid);
-        return fallback.length ? fallback[Math.floor(Math.random()*fallback.length)] : (aArr[0] || '');
-      }
+      if(!pool.length){ const fb = aArr.filter(x => x !== avoid); return fb.length ? fb[Math.floor(Math.random()*fb.length)] : (aArr[0] || ''); }
       return pool[Math.floor(Math.random()*pool.length)];
     }
 
@@ -300,13 +312,13 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       const sets=[], lastByPos = Array(7).fill(null);
       for(let s=0; s<count; s++){
         const usedA = new Set();
-        const l0 = pickOne(GROUPS.M, lastByPos[0]);                    // M
-        const l1 = pickDistinctA(GROUPS.A, usedA, lastByPos[1]); usedA.add(l1); // A1
-        const l2 = pickOne(GROUPS.R, lastByPos[2]);                    // R
-        const l3 = pickOne(GROUPS.I, lastByPos[3]);                    // I
-        const l4 = pickDistinctA(GROUPS.A, usedA, lastByPos[4]); usedA.add(l4); // A2
-        const l5 = pickOne(GROUPS.N, lastByPos[5]);                    // N
-        const l6 = pickDistinctA(GROUPS.A, usedA, lastByPos[6]);               // A3
+        const l0 = pickOne(GROUPS.M, lastByPos[0]);
+        const l1 = pickDistinctA(GROUPS.A, usedA, lastByPos[1]); usedA.add(l1);
+        const l2 = pickOne(GROUPS.R, lastByPos[2]);
+        const l3 = pickOne(GROUPS.I, lastByPos[3]);
+        const l4 = pickDistinctA(GROUPS.A, usedA, lastByPos[4]); usedA.add(l4);
+        const l5 = pickOne(GROUPS.N, lastByPos[5]);
+        const l6 = pickDistinctA(GROUPS.A, usedA, lastByPos[6]);
         const set = [l0,l1,l2,l3,l4,l5,l6];
         for(let i=0;i<7;i++) lastByPos[i]=set[i];
         sets.push(set);
@@ -318,9 +330,7 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     let currentSet = 0;
 
     function renderFullAcronym(lines){
-      const full = document.getElementById('acronymFull');
-      if(!full) return;
-
+      const full = document.getElementById('acronymFull'); if(!full) return;
       const letters = ['M','A','R','I','A','N','A'];
 
       const wrapper = document.createElement('div');
@@ -345,41 +355,25 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       full.innerHTML = '';
       full.appendChild(wrapper);
 
-      requestAnimationFrame(()=>{
-        full.style.height = newH + 'px';
-        full.style.opacity = '1';
-      });
+      requestAnimationFrame(()=>{ full.style.height = newH + 'px'; full.style.opacity = '1'; });
 
-      const onEnd = (e)=>{
-        if(e.propertyName === 'height'){
-          full.style.height = 'auto';
-          full.removeEventListener('transitionend', onEnd);
-        }
-      };
+      const onEnd = (e)=>{ if(e.propertyName === 'height'){ full.style.height = 'auto'; full.removeEventListener('transitionend', onEnd); } };
       full.addEventListener('transitionend', onEnd);
     }
 
-    function nextAcronym(){
-      currentSet = (currentSet + 1) % ACRONYM_SETS.length;
-      renderFullAcronym(ACRONYM_SETS[currentSet]);
-    }
+    function nextAcronym(){ currentSet = (currentSet + 1) % ACRONYM_SETS.length; renderFullAcronym(ACRONYM_SETS[currentSet]); }
 
     /* ===== Boot ===== */
     window.addEventListener('load', ()=>{
       digitarSequencial();
       setInterval(cycleEmoji, 5000);
-
       ACRONYM_SETS = makeAcronymSets(20);
       renderFullAcronym(ACRONYM_SETS[0]);
 
       let timer = setInterval(nextAcronym, 3000);
       document.addEventListener('visibilitychange', ()=>{
-        if(document.visibilityState === 'visible'){
-          clearInterval(timer);
-          timer = setInterval(nextAcronym, 3000);
-        }else{
-          clearInterval(timer);
-        }
+        if(document.visibilityState === 'visible'){ clearInterval(timer); timer = setInterval(nextAcronym, 3000); }
+        else{ clearInterval(timer); }
       });
     });
   </script>
