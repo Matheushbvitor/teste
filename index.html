@@ -60,7 +60,7 @@
       text-align:left;
     }
     #acronymFull .row{
-      display:flex; align-items:center; gap:10px; margin:2px 0;  /* margens menores para compactar */
+      display:flex; align-items:center; gap:10px; margin:2px 0;
     }
     #acronymFull .letter{
       width:28px; height:28px; flex:0 0 28px;
@@ -141,7 +141,13 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
 
     const destino = document.getElementById("textoDigitado");
     let index = 0;
-    const BASE_INTERVAL=21, COMMA_PAUSE=32, SENTENCE_PAUSE=66, REVEAL_DELAY=157, FADE_DURATION=47;
+
+    /* 15% mais rápido */
+    const BASE_INTERVAL = 18;   // 21 * 0.85
+    const COMMA_PAUSE   = 27;   // 32 * 0.85
+    const SENTENCE_PAUSE= 56;   // 66 * 0.85
+    const REVEAL_DELAY  = 133;  // 157 * 0.85
+    const FADE_DURATION = 40;   // 47 * 0.85
 
     function nextDelayFor(c){
       if (c===','||c===';') return BASE_INTERVAL+COMMA_PAUSE;
@@ -156,7 +162,15 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       const span=document.createElement('span');
       span.textContent='❤️'; span.style.display='inline'; span.style.opacity='1';
       span.style.transition=`opacity ${FADE_DURATION}ms ease`; destino.appendChild(span);
-      setTimeout(()=>{ span.style.opacity='0'; setTimeout(()=>{ span.textContent=c; span.style.opacity='1'; index++; setTimeout(digitarSequencial,nextDelayFor(c)); }, FADE_DURATION); }, REVEAL_DELAY);
+      setTimeout(()=>{ 
+        span.style.opacity='0'; 
+        setTimeout(()=>{ 
+          span.textContent=c; 
+          span.style.opacity='1'; 
+          index++; 
+          setTimeout(digitarSequencial,nextDelayFor(c)); 
+        }, FADE_DURATION); 
+      }, REVEAL_DELAY);
     }
 
     /* ===== Emoji do título ===== */
@@ -358,4 +372,3 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
   </script>
 </body>
 </html>
-
