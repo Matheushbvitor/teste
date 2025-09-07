@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Por que eu queria uma chance</title>
   <style>
-    /* Fundo com a sua foto */
+    /* Fundo com a sua foto (agora mostrando 100% da imagem) */
     body {
       margin: 0;
       min-height: 100vh;
+      /* se quiser outra cor de borda, troque #ffffff */
+      background-color: #ffffff;
       background-image: url("IMG_20250823_124847408.jpg");
-      background-size: cover;              /* cobre a tela toda */
-      background-position: center center;  /* centraliza em vocês dois */
+      background-size: contain;           /* <- mostra a imagem inteira */
+      background-position: center center; /* <- centraliza */
       background-repeat: no-repeat;
       display: grid;
       place-items: center;
       padding: 20px;
     }
+
     /* Caixa para deixar texto legível sobre a foto */
     .card {
       width: min(900px, 96vw);
@@ -42,7 +45,6 @@
     }
     .btn:active { transform: scale(0.98); }
     .btn:hover  { filter: brightness(1.05); }
-    /* Esconde o player (o som toca em background) */
     audio { display:none; }
   </style>
 </head>
@@ -63,10 +65,9 @@
   <script>
     function retornar(){ window.location.href = "index.html"; }
 
-    // Tenta garantir o autoplay assim que a página carregar
     window.addEventListener("load", () => {
       const a = document.getElementById("bgm");
-      a.volume = 0.6; // volume suave
+      a.volume = 0.6;
       const tryPlay = () => a.play().catch(() => {});
       tryPlay();
       document.addEventListener("visibilitychange", () => {
