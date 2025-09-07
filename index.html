@@ -48,9 +48,7 @@
       75% { transform: translateX(-5px); }
       100% { transform: translateX(0); }
     }
-    .shaking {
-      animation: shake 0.3s;
-    }
+    .shaking { animation: shake 0.3s; }
   </style>
 </head>
 <body>
@@ -82,7 +80,14 @@
   </div>
 
   <script>
-    function aceitou(){ alert("Ebaaaaa! 😍 Vamos combinar então!"); }
+    // ✅ Ao clicar em Aceito, abre o WhatsApp com a mensagem já preenchida
+    function aceitou(){
+      const msg = encodeURIComponent("Aceitei 😍");
+      window.location.href = `https://wa.me/5518996259121?text=${msg}`;
+      // se preferir abrir em nova aba, use a linha abaixo e remova a de cima:
+      // window.open(`https://wa.me/5518996259121?text=${msg}`, "_blank", "noopener");
+    }
+
     function abrirPagina(){ window.location.href = "pagina.html"; }
 
     function abrirDialogo(){
@@ -100,16 +105,13 @@
     function tremerETrocar(e){
       e.preventDefault(); e.stopPropagation();
       const sim = document.getElementById('btnSim');
-      // adiciona classe de tremidinha
       sim.classList.add('shaking');
-      // remove após terminar a animação
       sim.addEventListener('animationend', () => {
         sim.classList.remove('shaking');
         trocarLugar();
       }, { once: true });
     }
 
-    // mesma lógica do FLIP animation anterior
     function trocarLugar(){
       const cont = document.getElementById('dialogButtons');
       const sim  = document.getElementById('btnSim');
@@ -118,11 +120,8 @@
       const simFirst = sim.getBoundingClientRect();
       const naoFirst = nao.getBoundingClientRect();
 
-      if (sim.nextElementSibling === nao) {
-        cont.insertBefore(nao, sim);
-      } else {
-        cont.insertBefore(sim, nao);
-      }
+      if (sim.nextElementSibling === nao) cont.insertBefore(nao, sim);
+      else cont.insertBefore(sim, nao);
 
       const simLast = sim.getBoundingClientRect();
       const naoLast = nao.getBoundingClientRect();
