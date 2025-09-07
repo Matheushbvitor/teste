@@ -11,7 +11,19 @@
       min-height: 100vh; margin: 0; background-color: #ffe4e1; padding: 20px; text-align: center;
     }
 
-    h1 { margin-bottom: 14px; font-size: 28px; }
+    /* ===== Título ===== */
+    h1.title {
+      margin-bottom: 18px;
+      font-size: 42px;              /* maior */
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    /* span do emoji que troca com fade */
+    .title-emoji {
+      display: inline-block;
+      transition: opacity 260ms ease;
+      will-change: opacity;
+    }
 
     .typing{
       font-size: 22px;
@@ -33,6 +45,7 @@
 
     @media (min-width: 1200px){
       .typing{ max-width: 1100px; font-size: 24px; }
+      h1.title{ font-size: 48px; }   /* ainda maior em telas grandes */
     }
 
     .button-container{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
@@ -52,11 +65,11 @@
     @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
     .shaking{ animation:shake .3s; }
 
-    /* ❤️ coração de rodapé – agora mais distante do botão */
+    /* ❤️ coração de rodapé – com mais espaço do botão */
     .heart {
       font-size: 64px;
       line-height: 1;
-      margin-top: 56px;  /* ⬅️ aumentado */
+      margin-top: 56px;
       user-select: none;
       animation: pulse 1.6s ease-in-out infinite;
     }
@@ -64,7 +77,10 @@
   </style>
 </head>
 <body>
-  <h1>Oi Mari 😍</h1>
+  <!-- Título com emoji que alterna -->
+  <h1 class="title">
+    Oi Mari <span id="emojiCycler" class="title-emoji" aria-hidden="true">😍</span>
+  </h1>
 
   <p id="textoDigitado" class="typing"></p>
 
@@ -92,6 +108,7 @@
   </div>
 
   <script>
+    // Botões
     function aceitou(){ const msg = encodeURIComponent("Aceitei :)"); window.location.href = `https://wa.me/5518996259121?text=${msg}`; }
     function abrirPagina(){ window.location.href = "pagina.html"; }
     function abrirDialogo(){
@@ -122,7 +139,7 @@
       requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; });
     }
 
-    // 🩷 Texto: coração → (1,3s) → letra com fade; sem quebrar palavras
+    // 🩷 Texto: coração → (1,3s) → letra com fade
     const texto =
       "Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.\nSinceramente? Tô começando a desconfiar que o diagnóstico é você.\nCom todo respeito, é claro… mas será que eu teria alguma chance com você?";
 
@@ -160,7 +177,7 @@
 
         const span = document.createElement("span");
         span.textContent = "❤️";
-        span.style.display = "inline";
+        span.style.display = "inline";  // evita quebra de palavra
         span.style.opacity = "1";
         span.style.transition = `opacity ${FADE_DURATION}ms ease`;
         destino.appendChild(span);
@@ -180,7 +197,23 @@
       }
     }
 
-    window.onload = digitarComCoracaoETransicao;
+    // 🔁 Emoji do título alternando a cada 3s com fade
+    const emojiList = ["🤩","🥰","😍","💖"];
+    const emojiEl = document.getElementById("emojiCycler");
+    let emojiIndex = 0; // já começa com "😍" no HTML; próximo será "💖"
+    function cycleEmoji(){
+      emojiEl.style.opacity = "0";
+      setTimeout(()=>{
+        emojiIndex = (emojiIndex + 1) % emojiList.length;
+        emojiEl.textContent = emojiList[emojiIndex];
+        emojiEl.style.opacity = "1";
+      }, 260); // mesmo tempo do CSS (title-emoji transition)
+    }
+
+    window.onload = function(){
+      digitarComCoracaoETransicao();
+      setInterval(cycleEmoji, 3000); // troca a cada 3s
+    };
   </script>
 </body>
 </html>
