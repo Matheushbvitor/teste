@@ -5,20 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Convite Especial</title>
   <style>
+    /* === Fundo com a mesma imagem e formato da outra página === */
     body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: #ffffff;
+      background-image: url("IMG_20250823_124847408.jpg");
+      background-size: contain;           /* mostra a imagem inteira */
+      background-position: center center; /* centraliza */
+      background-repeat: no-repeat;
+      display: grid;                      /* centraliza o conteúdo na página */
+      place-items: center;
+      padding: 20px;
+      text-align: center;
       font-family: sans-serif;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; margin: 0; background-color: #ffe4e1; padding: 20px; text-align: center;
     }
 
     /* ===== Título ===== */
     h1.title {
       margin-bottom: 18px;
-      font-size: 42px;              /* maior */
+      font-size: 42px;
       font-weight: 700;
       line-height: 1.15;
+      text-shadow: 0 1px 2px rgba(0,0,0,.35); /* leve reforço de contraste sobre a foto */
     }
-    /* span do emoji que troca com fade */
     .title-emoji {
       display: inline-block;
       transition: opacity 260ms ease;
@@ -40,12 +50,14 @@
       overflow-wrap: normal;
       hyphens: none;
       margin-bottom: 28px;
+
+      text-shadow: 0 1px 2px rgba(255,255,255,.25); /* sutil para legibilidade */
     }
     @keyframes blink-caret { 50%{ border-color:transparent; } }
 
     @media (min-width: 1200px){
       .typing{ max-width: 1100px; font-size: 24px; }
-      h1.title{ font-size: 48px; }   /* ainda maior em telas grandes */
+      h1.title{ font-size: 48px; }
     }
 
     .button-container{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
@@ -177,7 +189,7 @@
 
         const span = document.createElement("span");
         span.textContent = "❤️";
-        span.style.display = "inline";  // evita quebra de palavra
+        span.style.display = "inline";
         span.style.opacity = "1";
         span.style.transition = `opacity ${FADE_DURATION}ms ease`;
         destino.appendChild(span);
@@ -200,19 +212,19 @@
     // 🔁 Emoji do título alternando a cada 3s com fade
     const emojiList = ["🤩","🥰","😍","💖"];
     const emojiEl = document.getElementById("emojiCycler");
-    let emojiIndex = 0; // já começa com "😍" no HTML; próximo será "💖"
+    let emojiIndex = 0;
     function cycleEmoji(){
       emojiEl.style.opacity = "0";
       setTimeout(()=>{
         emojiIndex = (emojiIndex + 1) % emojiList.length;
         emojiEl.textContent = emojiList[emojiIndex];
         emojiEl.style.opacity = "1";
-      }, 260); // mesmo tempo do CSS (title-emoji transition)
+      }, 260);
     }
 
     window.onload = function(){
       digitarComCoracaoETransicao();
-      setInterval(cycleEmoji, 3000); // troca a cada 3s
+      setInterval(cycleEmoji, 3000);
     };
   </script>
 </body>
