@@ -1,69 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Convite Especial</title>
   <style>
     body {
       font-family: sans-serif;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100vh; margin: 0; background-color: #ffe4e1; padding: 20px; text-align: center;
+      min-height: 100vh; margin: 0; background-color: #ffe4e1; padding: 20px; text-align: center;
     }
-    h1 { margin-bottom: 14px; font-size: 24px; }
-    .button-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-    .btn {
-      padding: 15px 25px; font-size: 18px; border: none; border-radius: 10px;
-      cursor: pointer; transition: transform .15s ease;
-    }
-    .btn:active { transform: scale(0.98); }
-    .yes { background:#4CAF50; color:#fff; }
-    .no  { background:#f44336; color:#fff; }
-    .why { background:#ff9800; color:#fff; }
 
-    .dialog-overlay{
-      display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
-      justify-content:center; align-items:center; padding:16px;
+    h1 { margin-bottom: 14px; font-size: 28px; }
+
+    .typing{
+      font-size: 22px;
+      max-width: 960px;            /* bloco de texto mais largo */
+      line-height: 1.6;
+      color:#333;
+      text-align:center;
+
+      /* cursor */
+      border-right: 2px solid #333;
+      animation: blink-caret .75s step-end infinite;
+
+      /* quebras de linha corretas */
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+      margin-bottom: 28px;
     }
-    .dialog-box{
-      width: min(320px, 92vw);
-      background:#fff; border-radius:12px; padding:20px; text-align:center;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    @keyframes blink-caret { 50%{ border-color:transparent; } }
+
+    @media (min-width: 1200px){
+      .typing{ max-width: 1100px; font-size: 24px; }
     }
+
+    .button-container{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+    .btn{ padding:15px 25px; font-size:18px; border:none; border-radius:10px; cursor:pointer; transition:transform .15s ease; }
+    .btn:active{ transform:scale(.98); }
+    .yes{ background:#4CAF50; color:#fff; }
+    .no{  background:#f44336; color:#fff; }
+    .why{ background:#ff9800; color:#fff; }
+
+    .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center; padding:16px; }
+    .dialog-box{ width:min(320px,92vw); background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
     .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
     .dialog-buttons{ display:flex; justify-content:space-between; gap:12px; }
-    .dialog-buttons button{
-      flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer;
-      position: relative; will-change: transform;
-    }
-    .sim-btn{ background:#4CAF50; color:#fff; }
-    .nao-btn{ background:#f44336; color:#fff; }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
-    }
-    .shaking { animation: shake 0.3s; }
+    .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
+    @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
+    .shaking{ animation:shake .3s; }
   </style>
 </head>
 <body>
-  <h1>Oi Mari 🤩</h1>
-  <p style="max-width: 500px;">
-    Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.<br>
-    Sinceramente? Tô começando a desconfiar que o diagnóstico é você.<br>
-    Com todo respeito, é claro… mas será que eu teria alguma chance com você?
-  </p>
+  <h1>Oi Mari 😍</h1>
 
-  <div class="button-container" style="margin-bottom: 12px;">
-    <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
-  </div>
+  <p id="textoDigitado" class="typing"></p>
 
   <div class="button-container">
-    <button class="btn yes" onclick="aceitou()">Aceito!</button>
-    <button class="btn no"  onclick="abrirDialogo()">Não aceito!</button>
+    <button class="btn yes" onclick="aceitou()">Tenho chance!</button>
+    <button class="btn no"  onclick="abrirDialogo()">Não tenho chance!</button>
+  </div>
+
+  <div class="button-container" style="margin-top: 20px;">
+    <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
   </div>
 
   <!-- Caixa de diálogo -->
@@ -78,15 +79,9 @@
   </div>
 
   <script>
-    function aceitou(){
-      const msg = encodeURIComponent("Aceitei :)");
-      window.location.href = `https://wa.me/5518996259121?text=${msg}`;
-    }
-
-    function abrirPagina(){
-      window.location.href = "pagina.html";
-    }
-
+    // Botões
+    function aceitou(){ const msg = encodeURIComponent("Aceitei :)"); window.location.href = `https://wa.me/5518996259121?text=${msg}`; }
+    function abrirPagina(){ window.location.href = "pagina.html"; }
     function abrirDialogo(){
       const cont = document.getElementById('dialogButtons');
       const sim  = document.getElementById('btnSim');
@@ -94,52 +89,86 @@
       cont.innerHTML = ''; cont.appendChild(sim); cont.appendChild(nao);
       document.getElementById('dialogo').style.display = 'flex';
     }
-
-    function fecharDialogo(){
-      document.getElementById('dialogo').style.display = 'none';
-    }
-
+    function fecharDialogo(){ document.getElementById('dialogo').style.display = 'none'; }
     function tremerETrocar(e){
       e.preventDefault(); e.stopPropagation();
-      const sim = document.getElementById('btnSim');
+      const sim=document.getElementById('btnSim');
       sim.classList.add('shaking');
-      sim.addEventListener('animationend', () => {
-        sim.classList.remove('shaking');
-        trocarLugar();
-      }, { once: true });
+      sim.addEventListener('animationend', ()=>{ sim.classList.remove('shaking'); trocarLugar(); }, {once:true});
     }
-
     function trocarLugar(){
-      const cont = document.getElementById('dialogButtons');
-      const sim  = document.getElementById('btnSim');
-      const nao  = document.getElementById('btnNao');
-
-      const simFirst = sim.getBoundingClientRect();
-      const naoFirst = nao.getBoundingClientRect();
-
-      if (sim.nextElementSibling === nao) cont.insertBefore(nao, sim);
-      else cont.insertBefore(sim, nao);
-
-      const simLast = sim.getBoundingClientRect();
-      const naoLast = nao.getBoundingClientRect();
-
-      const simDx = simFirst.left - simLast.left;
-      const naoDx = naoFirst.left - naoLast.left;
-
-      animateSlide(sim, simDx);
-      animateSlide(nao, naoDx);
+      const cont=document.getElementById('dialogButtons');
+      const sim=document.getElementById('btnSim');
+      const nao=document.getElementById('btnNao');
+      const simFirst=sim.getBoundingClientRect(), naoFirst=nao.getBoundingClientRect();
+      if (sim.nextElementSibling===nao) cont.insertBefore(nao,sim); else cont.insertBefore(sim,nao);
+      const simLast=sim.getBoundingClientRect(), naoLast=nao.getBoundingClientRect();
+      animateSlide(sim, simFirst.left-simLast.left); animateSlide(nao, naoFirst.left-naoLast.left);
     }
-
     function animateSlide(el, dx){
-      el.style.transition = 'none';
-      el.style.transform  = `translateX(${dx}px)`;
-      el.getBoundingClientRect();
-      requestAnimationFrame(() => {
-        el.style.transition = 'transform 220ms ease';
-        el.style.transform  = 'translateX(0)';
-      });
+      el.style.transition='none'; el.style.transform=`translateX(${dx}px)`; el.getBoundingClientRect();
+      requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; });
     }
+
+    // 🩷 Texto: coração → (1,3s) → letra com fade; sem quebrar palavras
+    const texto =
+      "Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.\nSinceramente? Tô começando a desconfiar que o diagnóstico é você.\nCom todo respeito, é claro… mas será que eu teria alguma chance com você?";
+
+    const destino = document.getElementById("textoDigitado");
+    let index = 0;
+
+    const BASE_INTERVAL   = 130;
+    const COMMA_PAUSE     = 200;
+    const SENTENCE_PAUSE  = 450;
+    const REVEAL_DELAY    = 1300;
+    const FADE_DURATION   = 220;
+
+    function nextDelayFor(char){
+      if (char === ',' || char === ';') return BASE_INTERVAL + COMMA_PAUSE;
+      if (char === '.' || char === '!' || char === '?' || char === '…') return BASE_INTERVAL + SENTENCE_PAUSE;
+      return BASE_INTERVAL;
+    }
+
+    function digitarComCoracaoETransicao(){
+      if (index < texto.length){
+        const char = texto.charAt(index);
+
+        if (char === " "){
+          destino.append(" ");
+          index++;
+          setTimeout(digitarComCoracaoETransicao, BASE_INTERVAL);
+          return;
+        }
+        if (char === "\n"){
+          destino.appendChild(document.createElement("br"));
+          index++;
+          setTimeout(digitarComCoracaoETransicao, BASE_INTERVAL + SENTENCE_PAUSE);
+          return;
+        }
+
+        const span = document.createElement("span");
+        span.textContent = "❤️";
+        span.style.display = "inline";              // evita quebra no meio da palavra
+        span.style.opacity = "1";
+        span.style.transition = `opacity ${FADE_DURATION}ms ease`;
+        destino.appendChild(span);
+
+        setTimeout(()=>{
+          span.style.opacity = "0";
+          setTimeout(()=>{
+            span.textContent = char;
+            span.style.opacity = "1";
+          }, FADE_DURATION);
+        }, REVEAL_DELAY);
+
+        index++;
+        setTimeout(digitarComCoracaoETransicao, nextDelayFor(char));
+      } else {
+        destino.style.borderRight = "none";
+      }
+    }
+
+    window.onload = digitarComCoracaoETransicao;
   </script>
 </body>
 </html>
-
