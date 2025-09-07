@@ -50,22 +50,17 @@
       padding: 12px 16px;
       background: rgba(255,255,255,.06);
       border-radius: 12px;
-
       font-size: clamp(15px, 1.8vw, 19px);
       line-height: 1.6;
-
       transition: height 140ms ease, opacity 120ms ease;
       will-change: height, opacity;
       overflow: hidden;
       text-align:left;
     }
-    #acronymFull .row{
-      display:flex; align-items:center; gap:10px; margin:2px 0;
-    }
+    #acronymFull .row{ display:flex; align-items:center; gap:10px; margin:2px 0; }
     #acronymFull .letter{
       width:28px; height:28px; flex:0 0 28px;
-      border-radius:8px;
-      background:rgba(255,255,255,.92); color:#222;
+      border-radius:8px; background:rgba(255,255,255,.92); color:#222;
       font-weight:800; font-size:14px;
       display:flex; align-items:center; justify-content:center;
       box-shadow:0 4px 12px rgba(0,0,0,.25);
@@ -101,9 +96,33 @@
     </div>
   </div>
 
+  <!-- Áudio: feliznavida.mp3
+       1) Deixe um arquivo local "feliznavida.mp3" junto do HTML
+       2) OU substitua o RAW_GITHUB_URL pelo link "raw.githubusercontent.com/OWNER/REPO/BRANCH/path/feliznavida.mp3"
+  -->
+  <audio id="feliznavida-audio" preload="auto" crossorigin="anonymous">
+    <source src="feliznavida.mp3" type="audio/mpeg">
+    <source src="https://raw.githubusercontent.com/OWNER/REPO/BRANCH/path/feliznavida.mp3" type="audio/mpeg"><!-- troque pelo seu link -->
+  </audio>
+
   <script>
     /* ===== Botões/diálogo ===== */
-    function aceitou(){ const msg = encodeURIComponent("Aceitei :)"); window.location.href = `https://wa.me/5518996259121?text=${msg}`; }
+    function aceitou(){
+      // toca o áudio "feliznavida" com gesto do usuário (autorizado em mobile/desktop)
+      const a = document.getElementById('feliznavida-audio');
+      if (a) {
+        a.volume = 0.45;
+        a.currentTime = 0;
+        a.play().catch(()=>{});
+      }
+
+      // aguarda 4,5 segundos antes de redirecionar
+      setTimeout(()=>{
+        const msg = encodeURIComponent("Aceitei :)");
+        window.location.href = `https://wa.me/5518996259121?text=${msg}`;
+      }, 4500);
+    }
+
     function abrirPagina(){ window.location.href = "pagina.html"; }
     function abrirDialogo(){
       const cont = document.getElementById('dialogButtons');
@@ -298,14 +317,12 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     let ACRONYM_SETS = [];
     let currentSet = 0;
 
-    /* ===== render do bloco inferior – sem “buraco” e mais rápido ===== */
     function renderFullAcronym(lines){
       const full = document.getElementById('acronymFull');
       if(!full) return;
 
       const letters = ['M','A','R','I','A','N','A'];
 
-      // 1) Monta o novo conteúdo em um wrapper
       const wrapper = document.createElement('div');
       lines.forEach((txt, i)=>{
         const row = document.createElement('div'); row.className='row';
@@ -314,7 +331,6 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
         row.appendChild(chip); row.appendChild(span); wrapper.appendChild(row);
       });
 
-      // 2) Mede a nova altura offscreen (sem piscar)
       const measurer = full.cloneNode(false);
       measurer.style.cssText = 'position:absolute; visibility:hidden; pointer-events:none; left:-9999px; top:0; height:auto; opacity:1;';
       measurer.style.width = full.clientWidth + 'px';
@@ -323,20 +339,17 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       const newH = measurer.scrollHeight;
       measurer.remove();
 
-      // 3) Trava a altura atual e troca conteúdo no mesmo frame
       const currentH = full.offsetHeight;
       full.style.height = currentH + 'px';
       full.style.opacity = '0';
       full.innerHTML = '';
       full.appendChild(wrapper);
 
-      // 4) Anima para a nova altura + fade-in (sem delay)
       requestAnimationFrame(()=>{
         full.style.height = newH + 'px';
         full.style.opacity = '1';
       });
 
-      // 5) Libera a altura ao final
       const onEnd = (e)=>{
         if(e.propertyName === 'height'){
           full.style.height = 'auto';
