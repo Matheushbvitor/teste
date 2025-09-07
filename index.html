@@ -1,35 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Convite Especial</title>
   <style>
     body {
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      height: 100vh;
-      margin: 0;
-      background-color: #ffe4e1;
-      padding: 20px;
-      text-align: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; margin: 0; background-color: #ffe4e1; padding: 20px; text-align: center;
     }
-    h1 { font-size: 24px; margin: 0 0 10px; }
-    .button-container {
-      display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
-    }
+    h1 { margin-bottom: 14px; font-size: 24px; }
+    .button-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
     .btn {
       padding: 15px 25px; font-size: 18px; border: none; border-radius: 10px;
       cursor: pointer; transition: transform .15s ease;
     }
     .btn:active { transform: scale(0.98); }
-    .yes { background: #4CAF50; color: #fff; }
-    .no  { background: #f44336; color: #fff; }
-    .why { background: #ff9800; color: #fff; }
+    .yes { background:#4CAF50; color:#fff; }
+    .no  { background:#f44336; color:#fff; }
+    .why { background:#ff9800; color:#fff; }
+
+    /* diálogo */
+    .dialog-overlay{
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+      justify-content:center; align-items:center; padding:16px;
+    }
+    .dialog-box{
+      width: min(320px, 92vw);
+      background:#fff; border-radius:12px; padding:20px; text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
+    .dialog-buttons{ display:flex; justify-content:space-between; gap:12px; }
+    .dialog-buttons button{
+      flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer;
+      position: relative; will-change: transform;
+    }
+    .sim-btn{ background:#4CAF50; color:#fff; }
+    .nao-btn{ background:#f44336; color:#fff; }
+
+    /* animação tremidinha */
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    .shaking {
+      animation: shake 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -40,21 +61,88 @@
     Você aceita?
   </p>
 
-  <!-- Botão especial em cima -->
-  <div class="button-container" style="margin-bottom: 8px;">
+  <div class="button-container" style="margin-bottom: 12px;">
     <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 😅</button>
   </div>
 
-  <!-- Botões principais -->
   <div class="button-container">
     <button class="btn yes" onclick="aceitou()">Aceito!</button>
-    <button class="btn no"  onclick="naoAceitou()">Não aceito!</button>
+    <button class="btn no"  onclick="abrirDialogo()">Não aceito!</button>
+  </div>
+
+  <!-- Caixa de diálogo -->
+  <div class="dialog-overlay" id="dialogo">
+    <div class="dialog-box">
+      <p>Você tem certeza?</p>
+      <div class="dialog-buttons" id="dialogButtons">
+        <button id="btnSim" class="sim-btn" onclick="tremerETrocar(event)">SIM</button>
+        <button id="btnNao" class="nao-btn" onclick="fecharDialogo()">NÃO</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    function aceitou()   { alert("Ebaaaaa! 😍 Vamos combinar então!"); }
-    function naoAceitou(){ alert("Poxa... tudo bem 😢"); }
+    function aceitou(){ alert("Ebaaaaa! 😍 Vamos combinar então!"); }
     function abrirPagina(){ window.location.href = "pagina.html"; }
+
+    function abrirDialogo(){
+      const cont = document.getElementById('dialogButtons');
+      const sim  = document.getElementById('btnSim');
+      const nao  = document.getElementById('btnNao');
+      cont.innerHTML = ''; cont.appendChild(sim); cont.appendChild(nao);
+      document.getElementById('dialogo').style.display = 'flex';
+    }
+
+    function fecharDialogo(){
+      document.getElementById('dialogo').style.display = 'none';
+    }
+
+    function tremerETrocar(e){
+      e.preventDefault(); e.stopPropagation();
+      const sim = document.getElementById('btnSim');
+      // adiciona classe de tremidinha
+      sim.classList.add('shaking');
+      // remove após terminar a animação
+      sim.addEventListener('animationend', () => {
+        sim.classList.remove('shaking');
+        trocarLugar();
+      }, { once: true });
+    }
+
+    // mesma lógica do FLIP animation anterior
+    function trocarLugar(){
+      const cont = document.getElementById('dialogButtons');
+      const sim  = document.getElementById('btnSim');
+      const nao  = document.getElementById('btnNao');
+
+      const simFirst = sim.getBoundingClientRect();
+      const naoFirst = nao.getBoundingClientRect();
+
+      if (sim.nextElementSibling === nao) {
+        cont.insertBefore(nao, sim);
+      } else {
+        cont.insertBefore(sim, nao);
+      }
+
+      const simLast = sim.getBoundingClientRect();
+      const naoLast = nao.getBoundingClientRect();
+
+      const simDx = simFirst.left - simLast.left;
+      const naoDx = naoFirst.left - naoLast.left;
+
+      animateSlide(sim, simDx);
+      animateSlide(nao, naoDx);
+    }
+
+    function animateSlide(el, dx){
+      el.style.transition = 'none';
+      el.style.transform  = `translateX(${dx}px)`;
+      el.getBoundingClientRect(); // força reflow
+      requestAnimationFrame(() => {
+        el.style.transition = 'transform 220ms ease';
+        el.style.transform  = 'translateX(0)';
+      });
+    }
   </script>
 </body>
 </html>
