@@ -11,11 +11,11 @@
       min-height: 100vh;
       background-color: #ffffff;
       background-image: url("IMG_20250823_124847408.jpg");
-      background-size: contain;           /* mostra a imagem inteira */
-      background-position: center center; /* centraliza */
+      background-size: contain;
+      background-position: center center;
       background-repeat: no-repeat;
 
-      display: grid;                      /* centraliza o card */
+      display: grid;
       place-items: center;
       padding: 20px;
       text-align: center;
@@ -170,18 +170,19 @@
       requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; });
     }
 
-    // 🩷 Texto: coração → (1,3s) → letra com fade
+    // 🩷 Texto: UM coração por vez → letra com fade (mais 15% rápido)
     const texto =
       "Acho que tô precisando de terapia… ando com uns sintomas meio suspeitos: coração acelerado, sorriso bobo e uma vontade de te ver todo dia.\nSinceramente? Tô começando a desconfiar que o diagnóstico é você.\nCom todo respeito, é claro… mas será que eu teria alguma chance com você?";
 
     const destino = document.getElementById("textoDigitado");
     let index = 0;
 
-    const BASE_INTERVAL   = 130;
-    const COMMA_PAUSE     = 200;
-    const SENTENCE_PAUSE  = 450;
-    const REVEAL_DELAY    = 1300;
-    const FADE_DURATION   = 220;
+    /* tempos anteriores ÷ 1.15 */
+    const BASE_INTERVAL   = 21;  // 24 / 1.15 ≈ 20.9
+    const COMMA_PAUSE     = 32;  // 37 / 1.15 ≈ 32.2
+    const SENTENCE_PAUSE  = 66;  // 76 / 1.15 ≈ 66.1
+    const REVEAL_DELAY    = 157; // 181 / 1.15 ≈ 157.4
+    const FADE_DURATION   = 47;  // 62 / 1.15 ≈ 47.0
 
     function nextDelayFor(char){
       if (char === ',' || char === ';') return BASE_INTERVAL + COMMA_PAUSE;
@@ -189,46 +190,48 @@
       return BASE_INTERVAL;
     }
 
-    function digitarComCoracaoETransicao(){
-      if (index < texto.length){
-        const char = texto.charAt(index);
-
-        if (char === " "){
-          destino.append(" ");
-          index++;
-          setTimeout(digitarComCoracaoETransicao, BASE_INTERVAL);
-          return;
-        }
-        if (char === "\n"){
-          destino.appendChild(document.createElement("br"));
-          index++;
-          setTimeout(digitarComCoracaoETransicao, BASE_INTERVAL + SENTENCE_PAUSE);
-          return;
-        }
-
-        const span = document.createElement("span");
-        span.textContent = "❤️";
-        span.style.display = "inline";
-        span.style.opacity = "1";
-        span.style.transition = `opacity ${FADE_DURATION}ms ease`;
-        destino.appendChild(span);
-
-        setTimeout(()=>{
-          span.style.opacity = "0";
-          setTimeout(()=>{
-            span.textContent = char;
-            span.style.opacity = "1";
-          }, FADE_DURATION);
-        }, REVEAL_DELAY);
-
-        index++;
-        setTimeout(digitarComCoracaoETransicao, nextDelayFor(char));
-      } else {
+    function digitarSequencial(){
+      if (index >= texto.length){
         destino.style.borderRight = "none";
+        return;
       }
+
+      const char = texto.charAt(index);
+
+      // espaços e quebras sem coração
+      if (char === " "){
+        destino.append(" ");
+        index++;
+        setTimeout(digitarSequencial, BASE_INTERVAL);
+        return;
+      }
+      if (char === "\n"){
+        destino.appendChild(document.createElement("br"));
+        index++;
+        setTimeout(digitarSequencial, BASE_INTERVAL + SENTENCE_PAUSE);
+        return;
+      }
+
+      // coração único
+      const span = document.createElement("span");
+      span.textContent = "❤️";
+      span.style.display = "inline";
+      span.style.opacity  = "1";
+      span.style.transition = `opacity ${FADE_DURATION}ms ease`;
+      destino.appendChild(span);
+
+      setTimeout(() => {
+        span.style.opacity = "0";
+        setTimeout(() => {
+          span.textContent = char;
+          span.style.opacity = "1";
+          index++;
+          setTimeout(digitarSequencial, nextDelayFor(char));
+        }, FADE_DURATION);
+      }, REVEAL_DELAY);
     }
 
-    // 🔁 Emoji do título alternando a cada 3s com fade
+    // 🔁 Emoji do título alternando a cada 5s com fade
     const emojiList = ["🤩","🥰","😍","💖"];
     const emojiEl = document.getElementById("emojiCycler");
     let emojiIndex = 0;
@@ -242,8 +245,8 @@
     }
 
     window.onload = function(){
-      digitarComCoracaoETransicao();
-      setInterval(cycleEmoji, 3000);
+      digitarSequencial();
+      setInterval(cycleEmoji, 5000); // 5s
     };
   </script>
 </body>
