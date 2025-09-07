@@ -96,45 +96,51 @@
     </div>
   </div>
 
-  <!-- Áudio local na MESMA PASTA: feliznavida.mp3 -->
+  <!-- Áudios locais na MESMA PASTA -->
   <audio id="feliznavida-audio" preload="auto">
     <source src="feliznavida.mp3" type="audio/mpeg">
   </audio>
+  <audio id="sadsong-audio" preload="auto">
+    <source src="sadsong.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
-    /* ===== Botões/diálogo ===== */
-    async function aceitou(){
-      const local = document.getElementById('feliznavida-audio');
-      let played = false;
-
-      async function tryPlay(el, label){
-        try{
-          el.volume = 0.5;
-          el.currentTime = 0;
-          await el.play();
-          console.log(`[OK] Áudio tocando via ${label}`);
+    /* ===== util genérico para tocar áudio (com logs) ===== */
+    async function playFromElementOrNew(id, src, volume = 0.5, label = '') {
+      // tenta pelo elemento existente
+      const el = document.getElementById(id);
+      const tryPlay = async (audio, how) => {
+        try {
+          audio.volume = volume;
+          audio.currentTime = 0;
+          await audio.play();
+          console.log(`[OK] Áudio tocando via ${how}${label ? ' ('+label+')' : ''}`);
           return true;
-        }catch(err){
-          console.warn(`[ERRO] Falha ao tocar via ${label}:`, err);
+        } catch (err) {
+          console.warn(`[ERRO] Falha ao tocar via ${how}:`, err);
           return false;
         }
-      }
+      };
 
-      if (local) {
-        local.onerror = () => console.warn('[ERRO] onerror do <audio> (verifique nome/caminho: feliznavida.mp3).');
-        played = await tryPlay(local, '<audio>#feliznavida-audio');
+      if (el) {
+        el.onerror = () => console.warn(`[ERRO] onerror do <audio id="${id}"> (verifique nome/caminho: ${src}).`);
+        if (await tryPlay(el, `<audio>#${id}`)) return true;
       } else {
-        console.warn('[INFO] <audio id="feliznavida-audio"> não encontrado.');
+        console.warn(`[INFO] <audio id="${id}"> não encontrado no DOM.`);
       }
 
-      // Fallback: cria dinamicamente (mesmo caminho relativo)
-      if (!played) {
-        const dyn = new Audio('feliznavida.mp3');
-        dyn.preload = 'auto';
-        played = await tryPlay(dyn, 'new Audio("feliznavida.mp3")');
-      }
+      // fallback dinâmico
+      const dyn = new Audio(src);
+      dyn.preload = 'auto';
+      return await tryPlay(dyn, `new Audio("${src}")`);
+    }
 
-      // Redireciona após 4,5 s
+    /* ===== Botões/diálogo ===== */
+    async function aceitou(){
+      // toca feliznavida.mp3 no clique do botão verde
+      await playFromElementOrNew('feliznavida-audio', 'feliznavida.mp3', 0.5, 'feliz');
+
+      // redireciona após 4,5 s
       setTimeout(()=>{
         const msg = encodeURIComponent("Aceitei :)");
         window.location.href = `https://wa.me/5518996259121?text=${msg}`;
@@ -142,14 +148,20 @@
     }
 
     function abrirPagina(){ window.location.href = "pagina.html"; }
-    function abrirDialogo(){
+
+    async function abrirDialogo(){
+      // toca sadsong.mp3 no clique do botão vermelho
+      playFromElementOrNew('sadsong-audio', 'sadsong.mp3', 0.5, 'sad');
+
       const cont = document.getElementById('dialogButtons');
       const sim  = document.getElementById('btnSim');
       const nao  = document.getElementById('btnNao');
       cont.innerHTML = ''; cont.appendChild(sim); cont.appendChild(nao);
       document.getElementById('dialogo').style.display = 'flex';
     }
+
     function fecharDialogo(){ document.getElementById('dialogo').style.display = 'none'; }
+
     function tremerETrocar(e){
       e.preventDefault(); e.stopPropagation();
       const sim=document.getElementById('btnSim');
@@ -214,7 +226,7 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     const emojiList=["🤩","🥰","😍","💖"], emojiEl=document.getElementById("emojiCycler"); let emojiIndex=0;
     function cycleEmoji(){ emojiEl.style.opacity='0'; setTimeout(()=>{ emojiIndex=(emojiIndex+1)%emojiList.length; emojiEl.textContent=emojiList[emojiIndex]; emojiEl.style.opacity='1'; },260); }
 
-    /* ===== (Opcional) Dados dos acrônimos ===== */
+    /* ===== (Opcional) dados dos acrônimos e rotador (mantidos) ===== */
     const ACRONYM_BLOCK = `
 ---ACRONIMOS_POR_LETRA---
 [M]
