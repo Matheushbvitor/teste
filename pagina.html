@@ -10,8 +10,8 @@
       margin: 0;
       min-height: 100vh;
       background-image: url("IMG_20250823_124847408.jpg");
-      background-size: cover;          /* cobre a tela toda */
-      background-position: center;     /* centraliza */
+      background-size: cover;              /* cobre a tela toda */
+      background-position: center center;  /* centraliza em vocês dois */
       background-repeat: no-repeat;
       display: grid;
       place-items: center;
@@ -31,8 +31,13 @@
     h1 { margin: 0 0 12px; font-size: 28px; }
     p  { margin: 0 0 24px; font-size: 18px; line-height: 1.5; }
     .btn {
-      padding: 12px 22px; font-size: 16px; border: none; border-radius: 10px;
-      background: #4CAF50; color: #fff; cursor: pointer;
+      padding: 12px 22px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #4CAF50;
+      color: #fff;
+      cursor: pointer;
       transition: transform .15s ease, filter .15s ease;
     }
     .btn:active { transform: scale(0.98); }
@@ -61,11 +66,9 @@
     // Tenta garantir o autoplay assim que a página carregar
     window.addEventListener("load", () => {
       const a = document.getElementById("bgm");
-      // volume suave; ajuste se quiser
-      a.volume = 0.6;
+      a.volume = 0.6; // volume suave
       const tryPlay = () => a.play().catch(() => {});
       tryPlay();
-      // tenta novamente ao ganhar foco/visibilidade (útil em alguns navegadores)
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") tryPlay();
       });
