@@ -14,20 +14,35 @@
       background-size: contain;           /* mostra a imagem inteira */
       background-position: center center; /* centraliza */
       background-repeat: no-repeat;
-      display: grid;                      /* centraliza o conteúdo na página */
+
+      /* centraliza o card no viewport */
+      display: grid;
       place-items: center;
       padding: 20px;
       text-align: center;
       font-family: sans-serif;
     }
 
+    /* ===== Card translúcido para TODOS os elementos ===== */
+    .card {
+      width: min(980px, 96vw);
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      padding: 28px 24px;
+      border-radius: 16px;
+      text-align: center;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
     /* ===== Título ===== */
     h1.title {
-      margin-bottom: 18px;
+      margin: 0 0 18px;
       font-size: 42px;
       font-weight: 700;
       line-height: 1.15;
-      text-shadow: 0 1px 2px rgba(0,0,0,.35); /* leve reforço de contraste sobre a foto */
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,.55);
     }
     .title-emoji {
       display: inline-block;
@@ -35,42 +50,58 @@
       will-change: opacity;
     }
 
+    /* Texto com cursor e melhor legibilidade sobre o card */
     .typing{
       font-size: 22px;
-      max-width: 960px;
+      max-width: 100%;
       line-height: 1.6;
-      color:#333;
+      color:#fff;
       text-align:center;
 
-      border-right: 2px solid #333;
+      border-right: 2px solid rgba(255,255,255,.9);
       animation: blink-caret .75s step-end infinite;
 
       white-space: pre-wrap;
       word-break: normal;
       overflow-wrap: normal;
       hyphens: none;
-      margin-bottom: 28px;
+      margin: 0 auto 28px;
 
-      text-shadow: 0 1px 2px rgba(255,255,255,.25); /* sutil para legibilidade */
+      text-shadow: 0 1px 2px rgba(0,0,0,.55);
     }
     @keyframes blink-caret { 50%{ border-color:transparent; } }
 
     @media (min-width: 1200px){
-      .typing{ max-width: 1100px; font-size: 24px; }
+      .typing{ font-size: 24px; }
       h1.title{ font-size: 48px; }
     }
 
-    .button-container{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
-    .btn{ padding:15px 25px; font-size:18px; border:none; border-radius:10px; cursor:pointer; transition:transform .15s ease; }
+    .button-container{
+      display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px;
+    }
+    .btn{
+      padding:15px 25px; font-size:18px; border:none; border-radius:10px;
+      cursor:pointer; transition:transform .15s ease, filter .15s ease;
+    }
     .btn:active{ transform:scale(.98); }
+    .btn:hover{ filter:brightness(1.06); }
+
     .yes{ background:#4CAF50; color:#fff; }
     .no{  background:#f44336; color:#fff; }
     .why{ background:#ff9800; color:#fff; }
 
     .btn .emo { margin-left: .35em; display:inline-block; transform: translateY(1px); }
 
-    .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center; padding:16px; }
-    .dialog-box{ width:min(320px,92vw); background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+    /* Diálogo */
+    .dialog-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+      justify-content:center; align-items:center; padding:16px; }
+    .dialog-box{
+      width:min(360px, 92vw);
+      background: rgba(255,255,255,0.96);
+      border-radius:12px; padding:20px; text-align:center;
+      box-shadow:0 12px 36px rgba(0,0,0,.35);
+      backdrop-filter: blur(2px);
+    }
     .dialog-box p{ margin:0 0 16px; font-size:18px; color:#333; }
     .dialog-buttons{ display:flex; justify-content:space-between; gap:12px; }
     .dialog-buttons button{ flex:1; padding:10px 0; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
@@ -84,37 +115,41 @@
       margin-top: 56px;
       user-select: none;
       animation: pulse 1.6s ease-in-out infinite;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.45));
     }
     @keyframes pulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:1} }
   </style>
 </head>
 <body>
-  <!-- Título com emoji que alterna -->
-  <h1 class="title">
-    Oi Mari <span id="emojiCycler" class="title-emoji" aria-hidden="true">😍</span>
-  </h1>
+  <!-- TODO o conteúdo fica dentro do card -->
+  <div class="card">
+    <!-- Título com emoji que alterna -->
+    <h1 class="title">
+      Oi Mari <span id="emojiCycler" class="title-emoji" aria-hidden="true">😍</span>
+    </h1>
 
-  <p id="textoDigitado" class="typing"></p>
+    <p id="textoDigitado" class="typing"></p>
 
-  <div class="button-container">
-    <button class="btn yes" onclick="aceitou()">Tenho chance! <span class="emo" role="img" aria-label="rosto apaixonado">🥰</span></button>
-    <button class="btn no"  onclick="abrirDialogo()">Não tenho chance! <span class="emo" role="img" aria-label="triste">🙁</span></button>
+    <div class="button-container">
+      <button class="btn yes" onclick="aceitou()">Tenho chance! <span class="emo" role="img" aria-label="rosto apaixonado">🥰</span></button>
+      <button class="btn no"  onclick="abrirDialogo()">Não tenho chance! <span class="emo" role="img" aria-label="triste">🙁</span></button>
+    </div>
+
+    <div class="button-container" style="margin-top: 20px;">
+      <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
+    </div>
+
+    <!-- ❤️ coração para preencher o espaço vazio -->
+    <div class="heart" aria-hidden="true">❤️</div>
   </div>
 
-  <div class="button-container" style="margin-top: 20px;">
-    <button class="btn why" onclick="abrirPagina()">Clique antes de me dar um fora 🤔</button>
-  </div>
-
-  <!-- ❤️ coração para preencher o espaço vazio -->
-  <div class="heart" aria-hidden="true">❤️</div>
-
-  <!-- Caixa de diálogo -->
+  <!-- Caixa de diálogo (fora do card para ficar sobre toda a tela) -->
   <div class="dialog-overlay" id="dialogo">
     <div class="dialog-box">
       <p>Você tem certeza?</p>
       <div class="dialog-buttons" id="dialogButtons">
-        <button id="btnSim" class="sim-btn" onclick="tremerETrocar(event)">SIM</button>
-        <button id="btnNao" class="nao-btn" onclick="fecharDialogo()">NÃO</button>
+        <button id="btnSim" class="yes" onclick="tremerETrocar(event)">SIM</button>
+        <button id="btnNao" class="no"  onclick="fecharDialogo()">NÃO</button>
       </div>
     </div>
   </div>
