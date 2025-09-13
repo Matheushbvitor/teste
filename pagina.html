@@ -17,6 +17,7 @@
       display: grid;
       place-items: center;
       padding: 20px;
+      font-family: sans-serif;
     }
 
     /* Caixa para deixar texto legível sobre a foto */
@@ -30,8 +31,23 @@
       backdrop-filter: blur(2px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
-    h1 { margin: 0 0 12px; font-size: 28px; }
-    p  { margin: 0 0 24px; font-size: 18px; line-height: 1.5; }
+
+    h1 { margin: 0 0 12px; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,.55); }
+
+    /* ===== Efeito de digitação (coração → letra) ===== */
+    .typing{
+      font-size: 18px;
+      line-height: 1.6;
+      color:#fff;
+      text-align:center;
+      border-right: 2px solid rgba(255,255,255,.9);
+      animation: blink-caret .75s step-end infinite;
+      white-space: pre-wrap;   /* respeita \n */
+      margin: 0 0 24px;
+      text-shadow: 0 1px 2px rgba(0,0,0,.55);
+    }
+    @keyframes blink-caret { 50% { border-color: transparent; } }
+
     .btn {
       padding: 12px 22px;
       font-size: 16px;
@@ -44,21 +60,16 @@
     }
     .btn:active { transform: scale(0.98); }
     .btn:hover  { filter: brightness(1.05); }
+
     audio { display:none; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Por que eu quero uma chance? 💖</h1>
-    <p>
-      Você é empática, atenciosa e trabalhadora… daquelas mulheres raras que já pararam de fabricar. Uma verdadeira edição limitada. Além de educada e de boa família, dá para perceber que carrega valores que hoje são difíceis de encontrar.
-      <br><br>
-      Mesmo sendo brava rsrs, continua sendo uma pessoa incrível, daquelas que fazem bem só por estar perto. E ainda tem o coração palmeirense.
-      <br><br>
-      E olha… nem comecei a falar da sua beleza, do seu sorriso e do seu jeitinho doce.
-      <br><br>
-      Com tudo isso, só me resta pedir uma chance… pra te mostrar que você merece alguém que enxergue e valorize cada uma dessas qualidades e muito mais.
-    </p>
+
+    <!-- O texto será digitado com o efeito -->
+    <p id="textoDigitado" class="typing"></p>
 
     <button class="btn" onclick="retornar()">Retornar</button>
   </div>
@@ -69,6 +80,7 @@
   <script>
     function retornar(){ window.location.href = "index.html"; }
 
+    /* ===== Tentativa de autoplay amigável ===== */
     window.addEventListener("load", () => {
       const a = document.getElementById("bgm");
       a.volume = 0.6;
@@ -79,8 +91,76 @@
       });
       window.addEventListener("focus", tryPlay);
     });
+
+    /* ===== TEXTO EXATO ===== */
+    const texto =
+`Você é empática, atenciosa e trabalhadora… daquelas mulheres raras que já pararam de fabricar. Uma verdadeira edição limitada. Além de educada e de boa família, dá para perceber que carrega valores que hoje são difíceis de encontrar.
+
+Mesmo sendo brava rsrs, continua sendo uma pessoa incrível, daquelas que fazem bem só por estar perto. E ainda tem o coração palmeirense.
+
+E olha… nem comecei a falar da sua beleza, do seu sorriso e do seu jeitinho doce.
+
+Com tudo isso, só me resta pedir uma chance… pra te mostrar que você merece alguém que enxergue e valorize cada uma dessas qualidades e muito mais.`;
+
+    const destino = document.getElementById("textoDigitado");
+    let index = 0;
+
+    /* ===== 25% mais rápido (0.75x dos tempos originais) ===== */
+    const BASE_INTERVAL   = 16;  // era 21
+    const COMMA_PAUSE     = 24;  // era 32
+    const SENTENCE_PAUSE  = 50;  // era 66
+    const REVEAL_DELAY    = 118; // era 157
+    const FADE_DURATION   = 35;  // era 47
+
+    function nextDelayFor(c){
+      if (c === ',' || c === ';') return BASE_INTERVAL + COMMA_PAUSE;
+      if ('.!?…'.includes(c))     return BASE_INTERVAL + SENTENCE_PAUSE;
+      return BASE_INTERVAL;
+    }
+
+    function digitarSequencial(){
+      if (index >= texto.length){
+        destino.style.borderRight = 'none'; // remove cursor ao final
+        return;
+      }
+
+      const c = texto.charAt(index);
+
+      // Espaços
+      if (c === ' '){
+        destino.append(' ');
+        index++;
+        return setTimeout(digitarSequencial, BASE_INTERVAL);
+      }
+
+      // Quebras de linha
+      if (c === '\n'){
+        destino.appendChild(document.createElement('br'));
+        index++;
+        return setTimeout(digitarSequencial, BASE_INTERVAL + SENTENCE_PAUSE);
+      }
+
+      // Coração que vira a letra digitada
+      const span = document.createElement('span');
+      span.textContent = '❤️';
+      span.style.display = 'inline';
+      span.style.opacity = '1';
+      span.style.transition = `opacity ${FADE_DURATION}ms ease`;
+      destino.appendChild(span);
+
+      setTimeout(()=>{
+        span.style.opacity = '0';
+        setTimeout(()=>{
+          span.textContent = c;
+          span.style.opacity = '1';
+          index++;
+          setTimeout(digitarSequencial, nextDelayFor(c));
+        }, FADE_DURATION);
+      }, REVEAL_DELAY);
+    }
+
+    // Inicializa o efeito ao carregar
+    window.addEventListener('load', digitarSequencial);
   </script>
 </body>
 </html>
-
-
