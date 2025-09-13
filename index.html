@@ -18,6 +18,7 @@
     }
     h1.title{ margin:0 0 18px; font-size:42px; font-weight:700; line-height:1.15; text-shadow:0 1px 2px rgba(0,0,0,.55); }
     .title-emoji{ display:inline-block; transition:opacity .26s ease; will-change:opacity; }
+
     .typing{
       font-size:22px; line-height:1.6; border-right:2px solid rgba(255,255,255,.9);
       animation:blink-caret .75s step-end infinite; white-space:pre-wrap; margin:0 auto 14px;
@@ -43,7 +44,8 @@
       width:min(860px,92vw); margin:16px auto 0; padding:12px 16px;
       background:rgba(255,255,255,.06); border-radius:12px;
       font-size:clamp(15px,1.8vw,19px); line-height:1.6;
-      transition:height 140ms ease, opacity 120ms ease; will-change:height,opacity; overflow:hidden; text-align:left;
+      transition:height 180ms ease, opacity 160ms ease;
+      will-change:height,opacity; overflow:hidden; text-align:left;
     }
     #acronymFull .row{ display:flex; align-items:center; gap:10px; margin:2px 0; }
     #acronymFull .letter{
@@ -66,29 +68,31 @@
     @keyframes shine{to{transform:translateX(100%)}}
 
     /* Linhas entrando/saindo – 3 estilos */
-    /* RISE */
     .fx-rise.in{ animation:row-in 420ms var(--d,0ms) cubic-bezier(.2,.8,.2,1) both; }
     .fx-rise.out{ animation:row-out 320ms var(--d,0ms) ease-in both; }
     @keyframes row-in{from{opacity:0;transform:translateY(8px) scale(.98);filter:blur(3px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
     @keyframes row-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px);filter:blur(3px)}}
 
-    /* WIPE */
     .fx-wipe .text{ will-change:clip-path,transform,opacity; }
     .fx-wipe.in .text{ animation:wipe-in 520ms calc(var(--d,0ms) + 120ms) cubic-bezier(.22,.7,.16,1) both; }
     .fx-wipe.out .text{ animation:wipe-out 320ms var(--d,0ms) ease-in both; }
+    /* FIX: linha inteira some junto (inclui o chip da letra) */
+    .fx-wipe.out{ animation:row-out 320ms var(--d,0ms) ease-in both; }
     @keyframes wipe-in{from{clip-path:inset(0 100% 0 0);transform:translateY(4px);opacity:.0}to{clip-path:inset(0 0 0 0);transform:translateY(0);opacity:1}}
     @keyframes wipe-out{from{clip-path:inset(0 0 0 0);opacity:1}to{clip-path:inset(0 100% 0 0);opacity:0}}
 
-    /* FLIP */
     .fx-flip .text{ transform-origin:left center; will-change:transform,opacity; }
     .fx-flip.in  .text{ animation:flip-in 520ms calc(var(--d,0ms) + 90ms) cubic-bezier(.2,.8,.2,1) both; }
     .fx-flip.out .text{ animation:flip-out 300ms var(--d,0ms) ease-in both; }
+    /* FIX: idem para flip – some a linha toda */
+    .fx-flip.out{ animation:row-out 320ms var(--d,0ms) ease-in both; }
     @keyframes flip-in{from{transform:rotateX(-75deg);opacity:0;filter:blur(2px)}to{transform:rotateX(0);opacity:1;filter:blur(0)}}
     @keyframes flip-out{from{transform:rotateX(0);opacity:1}to{transform:rotateX(60deg);opacity:0}}
 
     @media (prefers-reduced-motion: reduce){
       .letter.anim{ animation:none !important }
-      .fx-rise.in,.fx-rise.out,.fx-wipe .text,.fx-flip .text{ animation:none !important }
+      .fx-rise.in,.fx-rise.out,.fx-wipe .text,.fx-flip .text,
+      .fx-wipe.out,.fx-flip.out{ animation:none !important }
     }
   </style>
 </head>
@@ -125,25 +129,48 @@
   <audio id="sadsong-audio" preload="auto"><source src="sadsong.mp3" type="audio/mpeg"></audio>
 
   <script>
+    /* ===== util genérico para tocar áudio ===== */
     async function playFromElementOrNew(id, src, volume=0.5){
       const el=document.getElementById(id);
       const tryP=async a=>{try{a.volume=volume;a.currentTime=0;await a.play();return true}catch{return false}};
-      if(el && await tryP(el)) return true; const dyn=new Audio(src); dyn.preload='auto'; return await tryP(dyn);
+      if(el && await tryP(el)) return true;
+      const dyn=new Audio(src); dyn.preload='auto';
+      return await tryP(dyn);
     }
-    async function aceitou(){ await playFromElementOrNew('feliznavida-audio','feliznavida.mp3',0.5);
-      setTimeout(()=>{ const msg=encodeURIComponent("Aceitei :)"); window.location.href=`https://wa.me/5518996259121?text=${msg}`; },4500);}
+
+    /* ===== Botões/diálogo ===== */
+    async function aceitou(){
+      await playFromElementOrNew('feliznavida-audio','feliznavida.mp3',0.5);
+      setTimeout(()=>{
+        const msg=encodeURIComponent("Aceitei :)");
+        window.location.href=`https://wa.me/5518996259121?text=${msg}`;
+      },4500);
+    }
     function abrirPagina(){ window.location.href="pagina.html"; }
-    async function abrirDialogo(){ playFromElementOrNew('sadsong-audio','sadsong.mp3',0.5);
+    async function abrirDialogo(){
+      playFromElementOrNew('sadsong-audio','sadsong.mp3',0.5);
       const c=document.getElementById('dialogButtons'), s=document.getElementById('btnSim'), n=document.getElementById('btnNao');
-      c.innerHTML=''; c.appendChild(s); c.appendChild(n); document.getElementById('dialogo').style.display='flex'; }
+      c.innerHTML=''; c.appendChild(s); c.appendChild(n);
+      document.getElementById('dialogo').style.display='flex';
+    }
     function fecharDialogo(){ document.getElementById('dialogo').style.display='none'; }
-    function tremerETrocar(e){ e.preventDefault(); e.stopPropagation(); const s=document.getElementById('btnSim');
-      s.classList.add('shaking'); s.addEventListener('animationend',()=>{ s.classList.remove('shaking'); trocarLugar();},{once:true}); }
-    function trocarLugar(){ const c=document.getElementById('dialogButtons'), s=document.getElementById('btnSim'), n=document.getElementById('btnNao');
-      const sF=s.getBoundingClientRect(), nF=n.getBoundingClientRect(); if(s.nextElementSibling===n) c.insertBefore(n,s); else c.insertBefore(s,n);
-      const sL=s.getBoundingClientRect(), nL=n.getBoundingClientRect(); animateSlide(s,sF.left-sL.left); animateSlide(n,nF.left-nL.left); }
-    function animateSlide(el,dx){ el.style.transition='none'; el.style.transform=`translateX(${dx}px)`; el.getBoundingClientRect();
-      requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; }); }
+    function tremerETrocar(e){
+      e.preventDefault(); e.stopPropagation();
+      const s=document.getElementById('btnSim');
+      s.classList.add('shaking');
+      s.addEventListener('animationend',()=>{ s.classList.remove('shaking'); trocarLugar();},{once:true});
+    }
+    function trocarLugar(){
+      const c=document.getElementById('dialogButtons'), s=document.getElementById('btnSim'), n=document.getElementById('btnNao');
+      const sF=s.getBoundingClientRect(), nF=n.getBoundingClientRect();
+      if(s.nextElementSibling===n) c.insertBefore(n,s); else c.insertBefore(s,n);
+      const sL=s.getBoundingClientRect(), nL=n.getBoundingClientRect();
+      animateSlide(s,sF.left-sL.left); animateSlide(n,nF.left-nL.left);
+    }
+    function animateSlide(el,dx){
+      el.style.transition='none'; el.style.transform=`translateX(${dx}px)`; el.getBoundingClientRect();
+      requestAnimationFrame(()=>{ el.style.transition='transform 220ms ease'; el.style.transform='translateX(0)'; });
+    }
 
     /* ===== Texto com coração/letra ===== */
     const texto =
@@ -152,7 +179,11 @@ Sinceramente? Tô começando a desconfiar que o diagnóstico é você.
 Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     const destino=document.getElementById("textoDigitado"); let index=0;
     const BASE_INTERVAL=18, COMMA_PAUSE=27, SENTENCE_PAUSE=56, REVEAL_DELAY=133, FADE_DURATION=40;
-    function nextDelayFor(c){ if(c===','||c===';')return BASE_INTERVAL+COMMA_PAUSE; if('.!?…'.includes(c))return BASE_INTERVAL+SENTENCE_PAUSE; return BASE_INTERVAL; }
+    function nextDelayFor(c){
+      if(c===','||c===';') return BASE_INTERVAL+COMMA_PAUSE;
+      if('.!?…'.includes(c)) return BASE_INTERVAL+SENTENCE_PAUSE;
+      return BASE_INTERVAL;
+    }
     function digitarSequencial(){
       if(index>=texto.length){ destino.style.borderRight='none'; return; }
       const c=texto.charAt(index);
@@ -240,19 +271,27 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
 ---FIM---
 `;
     function parseGroup(block, letter){
-      const re=new RegExp(`\\[${letter}\\]([\\s\\S]*?)(?=\\n\\[|---FIM---)`,'m'); const m=block.match(re);
-      if(!m) return []; return m[1].split('\n').map(l=>l.replace(/^\s*-\s*/,'').trim()).filter(Boolean);
+      const re=new RegExp(`\\[${letter}\\]([\\s\\S]*?)(?=\\n\\[|---FIM---)`,'m');
+      const m=block.match(re); if(!m) return [];
+      return m[1].split('\n').map(l=>l.replace(/^\s*-\s*/,'').trim()).filter(Boolean);
     }
-    const GROUPS={ M:parseGroup(ACRONYM_BLOCK,'M'), A:parseGroup(ACRONYM_BLOCK,'A'), R:parseGroup(ACRONYM_BLOCK,'R'), I:parseGroup(ACRONYM_BLOCK,'I'), N:parseGroup(ACRONYM_BLOCK,'N') };
+    const GROUPS={
+      M:parseGroup(ACRONYM_BLOCK,'M'),
+      A:parseGroup(ACRONYM_BLOCK,'A'),
+      R:parseGroup(ACRONYM_BLOCK,'R'),
+      I:parseGroup(ACRONYM_BLOCK,'I'),
+      N:parseGroup(ACRONYM_BLOCK,'N')
+    };
 
     function pickOne(arr,avoid){ const pool=arr.filter(x=>x!==avoid); return pool.length?pool[Math.floor(Math.random()*pool.length)]:(arr[0]||''); }
-    function pickDistinctA(aArr,used,avoid){ const pool=aArr.filter(x=>!used.has(x)&&x!==avoid);
+    function pickDistinctA(aArr,used,avoid){
+      const pool=aArr.filter(x=>!used.has(x)&&x!==avoid);
       if(!pool.length){ const fb=aArr.filter(x=>x!==avoid); return fb.length?fb[Math.floor(Math.random()*fb.length)]:(aArr[0]||''); }
       return pool[Math.floor(Math.random()*pool.length)];
     }
     function makeAcronymSets(count=20){
       const sets=[], lastByPos=Array(7).fill(null);
-      for(let s=0; s<count; s++){
+      for(let s=0;s<count;s++){
         const usedA=new Set();
         const l0=pickOne(GROUPS.M,lastByPos[0]);
         const l1=pickDistinctA(GROUPS.A,usedA,lastByPos[1]); usedA.add(l1);
@@ -261,8 +300,11 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
         const l4=pickDistinctA(GROUPS.A,usedA,lastByPos[4]); usedA.add(l4);
         const l5=pickOne(GROUPS.N,lastByPos[5]);
         const l6=pickDistinctA(GROUPS.A,usedA,lastByPos[6]);
-        const set=[l0,l1,l2,l3,l4,l5,l6]; for(let i=0;i<7;i++) lastByPos[i]=set[i]; sets.push(set);
-      } return sets;
+        const set=[l0,l1,l2,l3,l4,l5,l6];
+        for(let i=0;i<7;i++) lastByPos[i]=set[i];
+        sets.push(set);
+      }
+      return sets;
     }
 
     let ACRONYM_SETS=[], currentSet=0, swapBusy=false;
@@ -275,10 +317,8 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
         const row=document.createElement('div');
         const fx=FX_TYPES[Math.floor(Math.random()*FX_TYPES.length)];
         row.className=`row fx-${fx} in`; row.dataset.fx=fx; row.style.setProperty('--d',`${i*70}ms`);
-
         const chip=document.createElement('div'); chip.className='letter anim'; chip.style.setProperty('--delay',`${i*80}ms`); chip.textContent=letters[i]||'';
         const span=document.createElement('div'); span.className='text'; span.textContent=txt;
-
         row.appendChild(chip); row.appendChild(span); wrapper.appendChild(row);
       });
       return wrapper;
@@ -288,41 +328,87 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
       const full=document.getElementById('acronymFull'); if(!full) return;
       const wrapper=buildWrapper(lines);
 
-      // mede altura
+      // mede a nova altura
       const meas=full.cloneNode(false);
       meas.style.cssText='position:absolute; visibility:hidden; pointer-events:none; left:-9999px; top:0; height:auto; opacity:1;';
-      meas.style.width=full.clientWidth+'px'; meas.appendChild(wrapper.cloneNode(true)); full.parentNode.appendChild(meas);
+      meas.style.width=full.clientWidth+'px';
+      meas.appendChild(wrapper.cloneNode(true));
+      full.parentNode.appendChild(meas);
       const newH=meas.scrollHeight; meas.remove();
 
-      const currentH=full.offsetHeight; full.style.height=currentH+'px'; full.style.opacity='0';
-      full.innerHTML=''; full.appendChild(wrapper);
-      requestAnimationFrame(()=>{ full.style.height=newH+'px'; full.style.opacity='1'; });
-      const onEnd=e=>{ if(e.propertyName==='height'){ full.style.height='auto'; full.removeEventListener('transitionend',onEnd); } }; full.addEventListener('transitionend',onEnd);
+      const currentH=full.offsetHeight || 0;
+      const targetH=Math.max(currentH, newH);
+      full.style.height=targetH+'px';
+      full.style.opacity='0';
+
+      full.innerHTML='';
+      full.appendChild(wrapper);
+
+      requestAnimationFrame(()=>{
+        full.style.height=newH+'px';
+        full.style.opacity='1';
+      });
+
+      const onEnd=e=>{
+        if(e.propertyName==='height'){
+          full.style.height='auto';
+          full.removeEventListener('transitionend',onEnd);
+        }
+      };
+      full.addEventListener('transitionend',onEnd);
     }
 
-    // anima SAÍDA e depois renderiza ENTRADA
+    /* ===== Pausa extra entre conjuntos ===== */
+    const EXTRA_GAP_MS = 800; // +0,8s
+
     function swapAcronym(lines){
       if(swapBusy) return; swapBusy=true;
       const full=document.getElementById('acronymFull');
       const rows=[...full.querySelectorAll('.row')];
-      if(!rows.length){ renderFullAcronym(lines); swapBusy=false; return; }
 
-      rows.forEach((r,i)=>{ r.classList.remove('in'); r.classList.add('out'); r.style.setProperty('--d',`${i*70}ms`); });
-      const outTotal=320 + (rows.length-1)*70 + 60;
-      setTimeout(()=>{ renderFullAcronym(lines); swapBusy=false; }, outTotal);
+      if(!rows.length){
+        renderFullAcronym(lines);
+        swapBusy=false;
+        return;
+      }
+
+      rows.forEach((r,i)=>{
+        r.classList.remove('in');
+        r.classList.add('out');
+        r.style.setProperty('--d',`${i*70}ms`);
+      });
+
+      const outTotal = 320 + (rows.length - 1) * 70 + 60 + EXTRA_GAP_MS;
+
+      setTimeout(()=>{
+        renderFullAcronym(lines);
+        swapBusy=false;
+      }, outTotal);
     }
 
-    function nextAcronym(){ currentSet=(currentSet+1)%ACRONYM_SETS.length; swapAcronym(ACRONYM_SETS[currentSet]); }
+    function nextAcronym(){
+      currentSet=(currentSet+1)%ACRONYM_SETS.length;
+      swapAcronym(ACRONYM_SETS[currentSet]);
+    }
 
     /* ===== Boot ===== */
+    const CYCLE_MS = 4000; // +1s de tempo visível por variação
     window.addEventListener('load', ()=>{
       digitarSequencial();
       setInterval(cycleEmoji, 5000);
+
       ACRONYM_SETS=makeAcronymSets(20);
       renderFullAcronym(ACRONYM_SETS[0]);
 
-      let timer=setInterval(nextAcronym,3000);
-      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ clearInterval(timer); timer=setInterval(nextAcronym,3000);} else{ clearInterval(timer);} });
+      let timer=setInterval(nextAcronym, CYCLE_MS); // antes: 3000
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState==='visible'){
+          clearInterval(timer);
+          timer=setInterval(nextAcronym, CYCLE_MS);
+        } else {
+          clearInterval(timer);
+        }
+      });
     });
   </script>
 </body>
