@@ -74,13 +74,15 @@
 
     <p id="textoDigitado" class="typing"></p>
 
+    <!-- AGORA ESTE BLOCO VEM PRIMEIRO -->
+    <div class="button-container" style="margin-top:14px;">
+      <button id="whyBtn" class="btn why" onclick="abrirPagina()">Por que eu quero uma chance? 🤔</button>
+    </div>
+
+    <!-- E ESTE (sim/não) FICA LOGO ABAIXO -->
     <div class="button-container">
       <button class="btn yes" onclick="aceitou()">Tenho chance! <span class="emo" role="img" aria-label="rosto apaixonado">🥰</span></button>
       <button class="btn no"  onclick="abrirDialogo()">Não tenho chance! <span class="emo" role="img" aria-label="triste">🙁</span></button>
-    </div>
-
-    <div class="button-container" style="margin-top: 20px;">
-      <button id="whyBtn" class="btn why" onclick="abrirPagina()">Por que eu quero uma chance? 🤔</button>
     </div>
 
     <section id="acronymFull" aria-live="polite" aria-atomic="true"></section>
@@ -107,40 +109,19 @@
   <script>
     /* ===== util genérico para tocar áudio (com logs) ===== */
     async function playFromElementOrNew(id, src, volume = 0.5, label = '') {
-      // tenta pelo elemento existente
       const el = document.getElementById(id);
       const tryPlay = async (audio, how) => {
-        try {
-          audio.volume = volume;
-          audio.currentTime = 0;
-          await audio.play();
-          console.log(`[OK] Áudio tocando via ${how}${label ? ' ('+label+')' : ''}`);
-          return true;
-        } catch (err) {
-          console.warn(`[ERRO] Falha ao tocar via ${how}:`, err);
-          return false;
-        }
+        try { audio.volume = volume; audio.currentTime = 0; await audio.play(); return true; }
+        catch { return false; }
       };
-
-      if (el) {
-        el.onerror = () => console.warn(`[ERRO] onerror do <audio id="${id}"> (verifique nome/caminho: ${src}).`);
-        if (await tryPlay(el, `<audio>#${id}`)) return true;
-      } else {
-        console.warn(`[INFO] <audio id="${id}"> não encontrado no DOM.`);
-      }
-
-      // fallback dinâmico
-      const dyn = new Audio(src);
-      dyn.preload = 'auto';
+      if (el && await tryPlay(el, `<audio>#${id}`)) return true;
+      const dyn = new Audio(src); dyn.preload = 'auto';
       return await tryPlay(dyn, `new Audio("${src}")`);
     }
 
     /* ===== Botões/diálogo ===== */
     async function aceitou(){
-      // toca feliznavida.mp3 no clique do botão verde
       await playFromElementOrNew('feliznavida-audio', 'feliznavida.mp3', 0.5, 'feliz');
-
-      // redireciona após 4,5 s
       setTimeout(()=>{
         const msg = encodeURIComponent("Aceitei :)");
         window.location.href = `https://wa.me/5518996259121?text=${msg}`;
@@ -150,16 +131,13 @@
     function abrirPagina(){ window.location.href = "pagina.html"; }
 
     async function abrirDialogo(){
-      // toca sadsong.mp3 no clique do botão vermelho
       playFromElementOrNew('sadsong-audio', 'sadsong.mp3', 0.5, 'sad');
-
       const cont = document.getElementById('dialogButtons');
       const sim  = document.getElementById('btnSim');
       const nao  = document.getElementById('btnNao');
       cont.innerHTML = ''; cont.appendChild(sim); cont.appendChild(nao);
       document.getElementById('dialogo').style.display = 'flex';
     }
-
     function fecharDialogo(){ document.getElementById('dialogo').style.display = 'none'; }
 
     function tremerETrocar(e){
@@ -226,7 +204,7 @@ Com todo respeito, é claro… mas será que eu teria alguma chance com você?`;
     const emojiList=["🤩","🥰","😍","💖"], emojiEl=document.getElementById("emojiCycler"); let emojiIndex=0;
     function cycleEmoji(){ emojiEl.style.opacity='0'; setTimeout(()=>{ emojiIndex=(emojiIndex+1)%emojiList.length; emojiEl.textContent=emojiList[emojiIndex]; emojiEl.style.opacity='1'; },260); }
 
-    /* ===== (Opcional) dados dos acrônimos e rotador (mantidos) ===== */
+    /* ===== Acrônimos (mantidos) ===== */
     const ACRONYM_BLOCK = `
 ---ACRONIMOS_POR_LETRA---
 [M]
